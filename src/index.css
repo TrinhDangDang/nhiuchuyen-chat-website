@@ -441,22 +441,6 @@ tr {
   color: #333;
 }
 
-.xaochin-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  position: sticky;
-  top: 0; /* Pin it to the top when scrolling */
-  z-index: 10; /* Make sure it's above other sections */
-}
-
-/* Text styling (adjust as needed) */
-.big-to-small-text {
-  text-align: center; /* Center the text inside the <p> */
-  transition: font-size 0.1s ease;
-  font-weight: bold;
-}
 
 
 .details{
@@ -467,36 +451,41 @@ tr {
   justify-content: center;
 }
 
-
-/* Flip card container styling */
-.flip-card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  gap: 3px;
-  padding: 10px;
+.game-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh; /* Full screen height */
+  padding: 2rem;
 }
 
-/* Flip card styling */
+.flip-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-rows: repeat(2, 1fr); /* Exactly 2 rows */
+  gap: 1rem; /* Space between cards */
+  max-width: 600px;
+  width: 100%;
+}
+
 .flip-card {
-  perspective: 500px;
+  perspective: 1000px; /* For 3D flip effect */
+  cursor: pointer;
 }
 
 .flip-card-inner {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* Maintain square aspect ratio */
+  padding-top: 100%; /* Keeps cards square */
   transform-style: preserve-3d;
-  transform-origin: top;
-  animation: flip-back 1.5s forwards; /* Default state flips back */
- 
+  transition: transform 0.6s;
 }
 
-.flip-card:hover .flip-card-inner {
-  animation: flip-stay 1s ease-in-out forwards;
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
 }
 
-
-/* Front and back faces */
 .flip-card-front,
 .flip-card-back {
   position: absolute;
@@ -508,104 +497,54 @@ tr {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 5px;
+  font-size: 1.5rem;
+  border-radius: 10px;
 }
 
 .flip-card-front {
-  background-color: black;
-  color: #333;
+  background-color: #ccc;
 }
 
 .flip-card-back {
-  color: black;
-  background-color: blue;
+  background-color: #4caf50;
+  color: white;
   transform: rotateY(180deg);
 }
 
-
-/* adding rainbow as the background of each flip card
-.flip-card-back::before {  
-  content: '🌈';
-  position: absolute;
-  font-size: 2rem; /* Adjust the size */
-  /* top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-} */ 
-
-/* Keyframes for flipping */
-@keyframes flip-stay {
-  0% {
-    transform: rotateY(0deg); /* Front side */
-  }
-  50% {
-    transform: rotateY(180deg); /* Flipped */
-  }
-  100% {
-    transform: rotateY(180deg); /* Stay flipped */
-  }
+button {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
 }
 
-
-
-@keyframes flip-back {
-  0% {
-      transform: rotateY(180deg);
-  }
-  70% {
-      transform: rotateY(180deg);
-  }
-  100% {
-    transform: rotateY(0deg);
-}
+button:hover {
+  background-color: #0056b3;
 }
 
-
-/* .pixelCon {
-  width: 100%;
-  height: 100%;
-  top: 10px;
-  overflow: hidden;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0;
-  justify-content: center;
-
-}
-
-.pixel {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  animation: blink 7s infinite;
-}
-
-@keyframes blink {
-  0%    {opacity: 0.2;}
-  25%   {opacity: 0.3;}
-  50%   {opacity: 0.5;}
-  75%   {opacity: 0.8;}
-  100%  {opacity: 0.2;}
-} */
 
 .colorful-background {
-  height: 100vh;
+  height: 60vh;
   width: 100%;
+  font-size: 2rem;
+  background: radial-gradient(black, white);
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  overflow: hidden;
-  position: relative;
-  background: linear-gradient(270deg, #ff7eb3, #ff65a3, #7afcff, #feff9c, #fff740);
   background-size: 1000% 1000%; /* Ensure the animation looks smooth */
-  animation: gradientShift 10s infinite ease-in-out;
+  animation: gradientShift 3s ease-in-out forwards, fadeOut 1s 3s ease-in-out forwards;
   color: white;
   font-family: 'Nunito', sans-serif;
 }
+
 
 /* Keyframes for gradient animation */
 @keyframes gradientShift {
@@ -618,4 +557,18 @@ tr {
   100% {
       background-position: 0% 50%;
   }
+}
+
+/* Fade-out animation to transparent */
+@keyframes fadeOut {
+  0% {background: black}
+  100% { background: transparent; }
+}
+
+
+.hidden {
+  display: none;
+}
+.visible {
+  display: block;
 }

@@ -1,105 +1,155 @@
-// import {useEffect, useState} from 'react';
-import { useState } from "react"
-import './about.css'
+import { useState, useEffect, useRef } from "react";
+import { gsap, Power4 } from "gsap";
+import './about.css';
 
+const About = () => {
+  const correctName = ['T', 'D'];
 
+  const createCardSet = (name) => {
+    const cards = [...name, ...name];
+    return cards
+      .sort(() => Math.random() - 0.5)
+      .map((value, index) => ({
+        id: index,
+        value,
+        flipped: false,
+        matched: false,
+      }));
+  };
 
-const About = () =>{
+  const [cards, setCards] = useState(createCardSet(correctName));
+  const [flippedCards, setFlippedCards] = useState([]);
+  const [disabled, setDisabled] = useState(false);
+  const [moves, setMoves] = useState(0);
+  const [showPortfolio, setShowPortfolio] = useState(false);
+  const portfolioRef = useRef(null);
 
-    const [firstLetter, setFirstLetter] = useState('')
-    const [secondLetter, setSecondLetter] = useState('')
-    const [thirdLetter, setThirdLetter] = useState('')
-    const [message, setMessage] = useState('');
-    const [showSuprise, setShowSurpise] = useState(false);
-    const [showFlipCard, setShowFlipCard] = useState(true);
+  const handleCardClick = (card) => {
+    if (disabled || card.flipped || card.matched) return;
 
+    const newCards = cards.map((c) =>
+      c.id === card.id ? { ...c, flipped: true } : c
+    );
+    setCards(newCards);
 
-    const correctName = ['T', 'r', 'i', 'n', 'h'];
+    const newFlippedCards = [...flippedCards, card];
 
-    const aLittleSuprise = () => {
-        const enteredName = [
-            firstLetter.toUpperCase(),
-            secondLetter.toUpperCase(),
-            thirdLetter.toUpperCase(),
-        ].join('');
+    if (newFlippedCards.length === 2) {
+      setDisabled(true);
+      setTimeout(() => checkForMatch(newCards, newFlippedCards), 1000);
+    }
+    setFlippedCards(newFlippedCards);
+  };
 
-        if (enteredName === "TIH") {
-            setMessage("Correct! That's my name! 🎉");
-            setShowSurpise(true);
-            setShowFlipCard(false);
-            
-        } else {
-            setMessage("Oops, that's not my name. Try again!");
-        }
+  const checkForMatch = (newCards, flippedCards) => {
+    const [firstCard, secondCard] = flippedCards;
+
+    if (firstCard.value === secondCard.value) {
+      const updatedCards = newCards.map((card) =>
+        card.value === firstCard.value ? { ...card, matched: true } : card
+      );
+      setCards(updatedCards);
+    } else {
+      const resetCards = newCards.map((card) =>
+        card.flipped && !card.matched ? { ...card, flipped: false } : card
+      );
+      setCards(resetCards);
     }
 
-    const cards = Array.from({ length: 10 }, (_, index) => (
-       <div className="flip-card-container">
-            <div className="flip-card" key={index}>
+    setFlippedCards([]);
+    setMoves((prev) => prev + 1);
+    setDisabled(false);
+  };
+
+  useEffect(() => {
+    if (cards.every((card) => card.matched)) {
+      setShowPortfolio(true);
+    }
+  }, [cards, moves]);
+
+  useEffect(() => {
+    if (showPortfolio && portfolioRef.current) {
+      const tl = gsap.timeline();
+
+      // Step 1: Slide up small
+      tl.fromTo(
+        portfolioRef.current,
+        { y: 100, scale: 0.8, autoAlpha: 0 },
+        {
+          y: 10, // Slide up to a small offset
+          autoAlpha: 1,
+          duration: 0.7,
+          ease: Power4.easeOut,
+        }
+      )
+      // Step 2: Scale up after sliding stops
+      .to(portfolioRef.current, {
+        scale: 1,
+        duration: 0.8,
+        ease: Power4.easeOut,
+      });
+    }
+  }, [showPortfolio]);
+
+  return (
+    <main className="public__main">
+      {!showPortfolio && (
+        <div className="game-section">
+          <div className="flip-card-container">
+            {cards.map((card) => (
+              <div
+                className={`flip-card ${card.flipped ? 'flipped' : ''}`}
+                key={card.id}
+                onClick={() => handleCardClick(card)}
+              >
                 <div className="flip-card-inner">
-                    <div className="flip-card-front" >
-                    </div>
-                    <div className="flip-card-back">
-                        <h3>{correctName[index % correctName.length]}</h3>
-                    </div>
+                  <div className="flip-card-front"></div>
+                  <div className="flip-card-back">
+                    <h3>{card.value}</h3>
+                  </div>
                 </div>
-            </div>
-        </div> 
-    ));
-    
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-    return (
-        <main className="public__main">
-            {cards}
-            <button onClick={aLittleSuprise}>Submit</button>
-            <p>{message}</p>
-            <section className='center-section'>
-                <div className="xaochin-section">
-                </div>
-            </section>
-            
-            
-            <section className="details">
-                <p> my name is trinh i am a computer science student at uhcl i know a bit of python javascript c java react redux expressJs nodeJs blender html css git version control mySQL just a bit of this a that figuring things out i worked on this <a href='https://trinhdangdang.github.io/pacman-inspired-game/'>PACMAN & SPONGEBOB</a> i put stuffs i worked on here<a href='https://github.com/TrinhDangDang'> https://github.com/TrinhDangDang</a></p>
-                <p>life long leaner</p>
-                <p>perfectioist turns procrastinator</p>
-                <p>worrier to warrier</p>
-                <p>shameless fighter</p>
-            </section>
-            <div className="features-left">
-                        <h1>The quickest way to create modern presentation</h1>
-                        <p>Best software platform for running an internet business. We build the most powerful and flexible tools for internet commerce.</p>
-                    </div>
-                    <div className="features-right">
-                        <div className="features-card first">
-                            <img src="https://assets.website-files.com/62ce97d15218c10ce2fc3a24/62ce9a5a8730bad1850e8516_Group%2018.png" loading="lazy" width="195" alt="" className="features-card-img"/>
-                            <div className="features-card-title">Managment</div>
-                            <p>Software platform for running your new internet business</p>
-                        </div>
-                        <div className="features-card second">
-                            <img src="https://assets.website-files.com/62ce97d15218c10ce2fc3a24/62ce9a5a9e01c66cd417563f_Group%2017.png" loading="lazy" width="195" alt="" className="features-card-img"/>
-                            <div className="features-card-title">Entertainment</div>
-                            <p>Software platform for running your new internet business</p>
-                        </div>
-                        <div className="features-card third">
-                            <img src="https://assets.website-files.com/62ce97d15218c10ce2fc3a24/62ce9a5a9ceda35231ae8194_Group%2015.png" loading="lazy" width="195" alt="" className="features-card-img"/>
-                            <div className="features-card-title">Marketing</div>
-                            <p>Software platform for running your new internet business</p>
-                        </div>
-                        <div className="features-card fourth">
-                            <img src="https://assets.website-files.com/62ce97d15218c10ce2fc3a24/62ce9a5a50a221779aa0ca84_Group%2016.png" loading="lazy" width="195" alt="" className="features-card-img"/>
-                            <div className="features-card-title">References</div>
-                            <p>Software platform for running your new internet business</p>
-                        </div>
-                    </div>
-            <section className="resume">
-                If you like you can check out my resume here
-            </section>
-            <section>
-                you can contact me at trinhdangdang@gmail.com or shoot me a direct message on this website after creating an account
-            </section>
-        </main>
-    )
-}
+      <div
+        className="portfolio-section"
+        style={{ display: showPortfolio ? 'block' : 'none' }}
+      >
+        <div ref={portfolioRef} className="colorful-background">Hi 👋 My name is Trinh</div>
+        <section className="details">
+          <p>
+            My name is Trinh. I am a computer science student at UHCL. I know a
+            bit of Python, JavaScript, C, Java, React, Redux, ExpressJs, NodeJs,
+            Blender, HTML, CSS, Git version control, and MySQL. Just a bit of
+            this and that, figuring things out. I worked on this{" "}
+            <a href="https://trinhdangdang.github.io/pacman-inspired-game/">
+              PACMAN & SPONGEBOB
+            </a>
+            . I put stuff I worked on here:{" "}
+            <a href="https://github.com/TrinhDangDang">
+              https://github.com/TrinhDangDang
+            </a>
+          </p>
+          <p>Life-long learner</p>
+          <p>Perfectionist turns procrastinator</p>
+          <p>Worrier to warrior</p>
+          <p>Shameless fighter</p>
+        </section>
 
-export default About
+        <section className="resume">
+          If you like, you can check out my resume here.
+        </section>
+
+        <section>
+          You can contact me at trinhdangdang@gmail.com or shoot me a direct
+          message on this website after creating an account.
+        </section>
+      </div>
+    </main>
+  );
+};
+
+export default About;
