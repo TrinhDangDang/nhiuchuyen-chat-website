@@ -171,7 +171,7 @@ const About = () => {
             <p>
               Aiming for perfection can sometimes hold me back, so I focus on{" "}
               <span className="high-light-text">taking action</span> over
-              overthinking, and embrace chalenges along the way.
+              overthinking, and embrace challenges along the way.
             </p>
           </div>
           <div className="me-card">
