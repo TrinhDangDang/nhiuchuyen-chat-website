@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave } from "@fortawesome/free-solid-svg-icons"
 import { useRegisterNewUserMutation } from "../features/users/usersApiSlice"
 
 const USER_REGEX = /^[A-z]{3,20}$/
@@ -63,21 +61,11 @@ const Register = () => {
 
     const content = (
         <>
+            <main className="login">
+            <h1>New User</h1>
             <p className={errClass}>{error?.data?.message}</p>
 
-            <form className="form" onSubmit={onSaveUserClicked}>
-                <div className="form__title-row">
-                    <h2>New User</h2>
-                    <div className="form__action-buttons">
-                        <button
-                            className="icon-button"
-                            title="Save"
-                            disabled={!canSave}
-                        >
-                            <FontAwesomeIcon icon={faSave} />
-                        </button>
-                    </div>
-                </div>
+            <form className="login-form" onSubmit={onSaveUserClicked}>
                 <label className="form__label" htmlFor="username">
                     Username: <span className="nowrap">[3-20 letters]</span></label>
                 <input
@@ -100,10 +88,18 @@ const Register = () => {
                     value={password}
                     onChange={onPasswordChanged}
                 />
-
-                <label className="form__label" htmlFor="roles"> ASSIGNED ROLES: User</label>
+                <div className="form__action-buttons">
+                        <button
+                            className="icon-button"
+                            title="Save"
+                            disabled={!canSave}
+                        >
+                            💾
+                        </button>
+                    </div>
 
             </form>
+            </main>
         </>
     )
 
