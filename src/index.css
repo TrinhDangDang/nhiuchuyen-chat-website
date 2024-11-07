@@ -299,6 +299,15 @@ tr {
  
 }
 
+.register-form{
+  border:none;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+
+}
+
 .login-form .full-width {
   grid-column: 1 / -1;  /* Spans the element across both columns */
 }

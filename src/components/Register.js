@@ -65,7 +65,7 @@ const Register = () => {
             <h1>New User</h1>
             <p className={errClass}>{error?.data?.message}</p>
 
-            <form className="login-form" onSubmit={onSaveUserClicked}>
+            <form className="register-form" onSubmit={onSaveUserClicked}>
                 <label className="form__label" htmlFor="username">
                     Username: <span className="nowrap">[3-20 letters]</span></label>
                 <input
