@@ -40,7 +40,7 @@ function App() {
 
                 <Route index element={<Welcome />} />
                 <Route path="about" element={<About/>}/>
-                <Route element={<RequireAuth allowedRoles={[ROLES.Manager, ROLES.Admin]} />}>
+                <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
                   <Route path="users">
                     <Route index element={<UsersList />} />
                     <Route path=":id" element={<EditUser />} />

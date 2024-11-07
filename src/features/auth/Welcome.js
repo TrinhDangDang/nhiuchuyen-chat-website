@@ -1,30 +1,46 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import useAuth from '../../hooks/useAuth'
 import useTitle from '../../hooks/useTitle'
 
 const Welcome = () => {
 
-    const { username, isManager, isAdmin } = useAuth()
+    const { username, isAdmin } = useAuth()
 
-    useTitle(`techPosts: ${username}`)
+    useTitle(`${username}`)
 
-    const date = new Date()
-    const today = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'long' }).format(date)
+
+    const [time, setTime] = useState(new Date())
+    useEffect(() => {
+        // Update the time every second
+        const timerId = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+        return () => clearInterval(timerId);
+    }, []);
+
+    const formattedTime = new Intl.DateTimeFormat('en-US',
+        {
+            hour: 'numeric',
+            minute:'numeric',
+            second: 'numeric',
+            hour12: true
+        }
+    ).format(time)
 
     const content = (
         <section className="welcome">
 
-            <p>{today}</p>
+            <h1 style={{textAlign: "center"}}>Welcome {username}!</h1>
 
-            <h1>Welcome {username}!</h1>
+            <p><Link to="/dash/posts">All Posts 👀</Link></p>
 
-            <p><Link to="/dash/posts">View techPosts</Link></p>
+            <p><Link to="/dash/posts/new">Add New Post ➕</Link></p>
 
-            <p><Link to="/dash/posts/new">Add New techPost</Link></p>
+            {(isAdmin) && <p><Link to="/dash/users">View User Settings</Link></p>}
 
-            {(isManager || isAdmin) && <p><Link to="/dash/users">View User Settings</Link></p>}
-
-            {(isManager || isAdmin) && <p><Link to="/dash/users/new">Add New User</Link></p>}
+            {(isAdmin) && <p><Link to="/dash/users/new">Add New User</Link></p>}
+            <div className='digital-clock'>{formattedTime}</div>
 
         </section>
     )

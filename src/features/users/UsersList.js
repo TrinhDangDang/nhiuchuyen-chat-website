@@ -11,8 +11,8 @@ const UsersList = () => {
         error
     } = useGetUsersQuery(undefined, {
         pollingInterval: 60000,
-        refetchOnFocus: true,
-        refetchOnMountOrArgChange: true
+        refetchOnFocus: true, //refetch data when the window regains focus
+        refetchOnMountOrArgChange: true //refetch data when the component remounts
     })
 
     let content

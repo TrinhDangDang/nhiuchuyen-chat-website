@@ -1,23 +1,13 @@
-import { useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    faFileCirclePlus,
-    faFilePen,
-    faUserGear,
-    faUserPlus,
-    faRightFromBracket
-} from "@fortawesome/free-solid-svg-icons"
-import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import useAuth from '../hooks/useAuth'
 import PulseLoader from 'react-spinners/PulseLoader'
 
-const DASH_REGEX = /^\/dash(\/)?$/
 const NOTES_REGEX = /^\/dash\/posts(\/)?$/
 const USERS_REGEX = /^\/dash\/users(\/)?$/
 
 const DashHeader = () => {
-    const { isManager, isAdmin } = useAuth()
+    const {isAdmin } = useAuth()
 
     const navigate = useNavigate()
     const { pathname } = useLocation()
@@ -31,21 +21,24 @@ const DashHeader = () => {
 
     console.log(isSuccess)
 
-    useEffect(() => {
-        if (isSuccess) navigate('/')
-    }, [isSuccess, navigate])
-
     const onNewPostClicked = () => navigate('/dash/posts/new')
     const onNewUserClicked = () => navigate('/dash/users/new')
     const onPostsClicked = () => navigate('/dash/posts')
     const onUsersClicked = () => navigate('/dash/users')
-    const onAboutClicked = () => navigate('/dash')
-    
+    const onSettingClicked = () => navigate('/dash')
+    const onTitleClicked = () => navigate('/dash/about')
+    const handleLogout = async () => {
+        try {
+            const result = await sendLogout();
+            console.log("Logout success:", result);  // This should log if logout is successful
+            navigate("/")
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
+    };
 
-    let dashClass = null
-    if (!DASH_REGEX.test(pathname) && !NOTES_REGEX.test(pathname) && !USERS_REGEX.test(pathname)) {
-        dashClass = "dash-header__container--small"
-    }
+    
+    
 
     let newPostButton = null
     if (NOTES_REGEX.test(pathname)) {
@@ -55,7 +48,7 @@ const DashHeader = () => {
                 title="New Post"
                 onClick={onNewPostClicked}
             >
-                <FontAwesomeIcon icon={faFileCirclePlus} />
+                ✍🏽
             </button>
         )
     }
@@ -68,13 +61,13 @@ const DashHeader = () => {
                 title="New User"
                 onClick={onNewUserClicked}
             >
-                <FontAwesomeIcon icon={faUserPlus} />
+                ➕
             </button>
         )
     }
 
     let userButton = null
-    if (isManager || isAdmin) {
+    if (isAdmin) {
         if (!USERS_REGEX.test(pathname) && pathname.includes('/dash')) {
             userButton = (
                 <button
@@ -82,7 +75,7 @@ const DashHeader = () => {
                     title="Users"
                     onClick={onUsersClicked}
                 >
-                    <FontAwesomeIcon icon={faUserGear} />
+                    👥
                 </button>
             )
         }
@@ -96,7 +89,7 @@ const DashHeader = () => {
                 title="Posts"
                 onClick={onPostsClicked}
             >
-                <FontAwesomeIcon icon={faFilePen} />
+                📝
             </button>
         )
     }
@@ -105,20 +98,20 @@ const DashHeader = () => {
         <button
             className="icon-button"
             title="Logout"
-            onClick={sendLogout}
+            onClick={handleLogout}
         >
-            <FontAwesomeIcon icon={faRightFromBracket} />
+            🔓
         </button>
     )
 
     
-    const aboutButton = (
+    const settingButton = (
             <button
                 className="icon-button"
-                title="About"
-                onClick={onAboutClicked}
+                title="setting"
+                onClick={onSettingClicked}
             >
-                About
+                ⚙️
             </button>
         )
 
@@ -130,10 +123,11 @@ const DashHeader = () => {
     } else {
         buttonContent = (
             <>
-                {aboutButton}
+                {settingButton}
                 {newPostButton}
-                {newUserButton}
                 {postsButton}
+                <h1 className="dash-header__title" onClick={onTitleClicked} title='about Trinh'>Trinh Dang</h1>
+                {newUserButton}
                 {userButton}
                 {logoutButton}
             </>
@@ -144,14 +138,9 @@ const DashHeader = () => {
         <>
             <p className={errClass}>{error?.data?.message}</p>
             <header className="dash-header">
-                <div className={`dash-header__container ${dashClass}`}>
-                    <Link to="/dash/about">
-                        <h1 className="dash-header__title">TD</h1>
-                    </Link>
                     <nav className="dash-header__nav">
                         {buttonContent}
                     </nav>
-                </div>
             </header>
         </>
     )

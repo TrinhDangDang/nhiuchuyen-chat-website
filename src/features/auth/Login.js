@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate} from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setCredentials } from './authSlice'
 import { useLoginMutation } from './authApiSlice'
@@ -8,7 +8,7 @@ import useTitle from '../../hooks/useTitle'
 import PulseLoader from 'react-spinners/PulseLoader'
 
 const Login = () => {
-    useTitle('Employee Login')
+    useTitle('Login')
 
     const userRef = useRef()
     const errRef = useRef()
@@ -49,30 +49,32 @@ const Login = () => {
             } else {
                 setErrMsg(err.data?.message);
             }
-            errRef.current.focus();
+            if (errRef.current) {
+                errRef.current.focus();
+            }
         }
     }
 
+    const handleButtonClick = (e) => navigate('/create')
     const handleUserInput = (e) => setUsername(e.target.value)
     const handlePwdInput = (e) => setPassword(e.target.value)
     const handleToggle = () => setPersist(prev => !prev)
+    const getHome = () => navigate("/");
 
     const errClass = errMsg ? "errmsg" : "offscreen"
 
     if (isLoading) return <PulseLoader color={"#FFF"} />
 
     const content = (
-        <section className="public">
-            <header>
-                <h1>Welcome Back</h1>
-            </header>
+        <>
             <main className="login">
+                <h1>Welcome Back</h1>
                 <p ref={errRef} className={errClass} aria-live="assertive">{errMsg}</p>
 
-                <form className="form" onSubmit={handleSubmit}>
+                <form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="username">Username:</label>
                     <input
-                        className="form__input"
+                        className="login__form__input"
                         type="text"
                         id="username"
                         ref={userRef}
@@ -81,20 +83,16 @@ const Login = () => {
                         autoComplete="off"
                         required
                     />
-
                     <label htmlFor="password">Password:</label>
                     <input
-                        className="form__input"
+                        className="login__form__input"
                         type="password"
                         id="password"
                         onChange={handlePwdInput}
                         value={password}
                         required
                     />
-                    <button className="form__submit-button">Sign In</button>
-                    <Link to="/create"><button className="create_account">Create Account</button></Link>
-
-                    <label htmlFor="persist" className="form__persist">
+                    <label htmlFor="persist" className="form__persist full-width">
                         <input
                             type="checkbox"
                             className="form__checkbox"
@@ -104,12 +102,16 @@ const Login = () => {
                         />
                         Trust This Device
                     </label>
+                    <div className='signInCreateDiv'>
+                        <button className="form__submit-button">Sign In</button>
+                        <button className="create_account_button" onClick={handleButtonClick}>Create Account</button>
+                    </div>
                 </form>
             </main>
-            <footer>
-                <Link to="/">Back to Home</Link>
+            <footer className='public-footer'>
+                <button onClick={getHome} title='get home' className='icon-button'>🏠</button>
             </footer>
-        </section>
+            </>
     )
 
     return content

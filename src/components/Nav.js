@@ -1,26 +1,19 @@
-import {Link} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 // import { useEffect} from 'react';
 
 const Nav = () => {
-
+    const navigate = useNavigate();
+    const onHomeClicked = () => navigate("/")
+    const onPostsClicked = () => navigate("/bulletin")
+    const onLoginClicked = () => navigate("/login")
     return (
         <>
         <nav className="Nav">
-            <form className="searchForm" onSubmit={(e) => e.preventDefault()}>
-                {/* <label htmlFor="search">Search Posts</label> */}
-                {/* <input
-                    id="search"
-                    type="text"
-                    placeholder="Search Posts"
-                    value={}
-                    onChange={(e) => setSearch(e.target.value)}
-                /> */}
-            </form>
-            <h1 className="dash-header__title">TD</h1>
+            <h1 className="dash-header__title" title='About Trinh' onClick={onHomeClicked}>Trinh Dang</h1>
             <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/bulletin">Bullettin</Link></li>
-                <li><Link to="/login">Login</Link></li>
+                <li onClick={onHomeClicked}>About</li>
+                <li onClick={onPostsClicked} title='posts'>Bulletin</li>
+                <li onClick={onLoginClicked}>Login</li>
             </ul>
         </nav>
         </>

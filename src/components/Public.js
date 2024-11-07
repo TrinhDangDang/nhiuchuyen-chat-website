@@ -5,10 +5,10 @@ import Nav from './Nav'
 
 const Public = () => {
     const content = (
-        <section className="public">
+        <div className='page-container'>
             <Nav/>
             <Outlet/>
-        </section>
+        </div>
 
     )
     return content

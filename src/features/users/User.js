@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons"
+
 import { useNavigate } from 'react-router-dom'
 
 import { useSelector } from 'react-redux'
@@ -9,6 +8,7 @@ const User = ({ userId }) => {
     const user = useSelector(state => selectUserById(state, userId))
 
     const navigate = useNavigate()
+
 
     if (user) {
         const handleEdit = () => navigate(`/dash/users/${userId}`)
@@ -26,7 +26,7 @@ const User = ({ userId }) => {
                         className="icon-button table__button"
                         onClick={handleEdit}
                     >
-                        <FontAwesomeIcon icon={faPenToSquare} />
+                        🖊️
                     </button>
                 </td>
             </tr>

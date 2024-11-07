@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react"
 import { useUpdateUserMutation, useDeleteUserMutation } from "./usersApiSlice"
 import { useNavigate } from "react-router-dom"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { ROLES } from "../../config/roles"
+
 
 const USER_REGEX = /^[A-z]{3,20}$/
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/
@@ -108,29 +107,11 @@ const EditUserForm = ({ user }) => {
 
     const content = (
         <>
+            <main className="login">
+            <h2>Edit User</h2>
             <p className={errClass}>{errContent}</p>
 
             <form className="form" onSubmit={e => e.preventDefault()}>
-                <div className="form__title-row">
-                    <h2>Edit User</h2>
-                    <div className="form__action-buttons">
-                        <button
-                            className="icon-button"
-                            title="Save"
-                            onClick={onSaveUserClicked}
-                            disabled={!canSave}
-                        >
-                            <FontAwesomeIcon icon={faSave} />
-                        </button>
-                        <button
-                            className="icon-button"
-                            title="Delete"
-                            onClick={onDeleteUserClicked}
-                        >
-                            <FontAwesomeIcon icon={faTrashCan} />
-                        </button>
-                    </div>
-                </div>
                 <label className="form__label" htmlFor="username">
                     Username: <span className="nowrap">[3-20 letters]</span></label>
                 <input
@@ -153,10 +134,10 @@ const EditUserForm = ({ user }) => {
                     value={password}
                     onChange={onPasswordChanged}
                 />
-
                 <label className="form__label form__checkbox-container" htmlFor="user-active">
                     ACTIVE:
-                    <input
+                </label>
+                <input
                         className="form__checkbox"
                         id="user-active"
                         name="user-active"
@@ -164,10 +145,9 @@ const EditUserForm = ({ user }) => {
                         checked={active}
                         onChange={onActiveChanged}
                     />
-                </label>
-
+                <div className="role__select">
                 <label className="form__label" htmlFor="roles">
-                    ASSIGNED ROLES:</label>
+                    Select Roles:</label>
                 <select
                     id="roles"
                     name="roles"
@@ -179,8 +159,27 @@ const EditUserForm = ({ user }) => {
                 >
                     {options}
                 </select>
+                </div>
+                <div className="form__action-buttons">
+                        <button
+                            className="icon-button"
+                            title="Save"
+                            onClick={onSaveUserClicked}
+                            disabled={!canSave}
+                        >
+                            💾
+                        </button>
+                        <button
+                            className="icon-button"
+                            title="Delete"
+                            onClick={onDeleteUserClicked}
+                        >
+                            🗑️
+                        </button>
+                    </div>
 
             </form>
+            </main>
         </>
     )
 

@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react"
 import { useAddNewUserMutation } from "./usersApiSlice"
 import { useNavigate } from "react-router-dom"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave } from "@fortawesome/free-solid-svg-icons"
 import { ROLES } from "../../config/roles"
 
 const USER_REGEX = /^[A-z]{3,20}$/
@@ -80,21 +78,11 @@ const NewUserForm = () => {
 
     const content = (
         <>
+            <main className="login">
             <p className={errClass}>{error?.data?.message}</p>
-
+            <h1>New User</h1>
             <form className="form" onSubmit={onSaveUserClicked}>
-                <div className="form__title-row">
-                    <h2>New User</h2>
-                    <div className="form__action-buttons">
-                        <button
-                            className="icon-button"
-                            title="Save"
-                            disabled={!canSave}
-                        >
-                            <FontAwesomeIcon icon={faSave} />
-                        </button>
-                    </div>
-                </div>
+
                 <label className="form__label" htmlFor="username">
                     Username: <span className="nowrap">[3-20 letters]</span></label>
                 <input
@@ -131,8 +119,17 @@ const NewUserForm = () => {
                 >
                     {options}
                 </select>
-
+                <div className="form__action-buttons">
+                        <button
+                            className="icon-button"
+                            title="Save"
+                            disabled={!canSave}
+                        >
+                            💾
+                        </button>
+                    </div>
             </form>
+            </main>
         </>
     )
 

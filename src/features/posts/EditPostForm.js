@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react"
 import { useUpdatePostMutation, useDeletePostMutation } from "./postsApiSlice"
 import { useNavigate } from "react-router-dom"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 
 const EditPostForm = ({ post, users }) => {
 
@@ -63,29 +61,11 @@ const EditPostForm = ({ post, users }) => {
 
     const content = (
         <>
+        <main className="login">
+            <h1>Edit Post #{post.ticket}</h1>
             <p className={errClass}>{errContent}</p>
 
             <form className="form" onSubmit={e => e.preventDefault()}>
-                <div className="form__title-row">
-                    <h2>Edit Post #{post.ticket}</h2>
-                    <div className="form__action-buttons">
-                        <button
-                            className="icon-button"
-                            title="Save"
-                            onClick={onSavePostClicked}
-                            disabled={!canSave}
-                        >
-                            <FontAwesomeIcon icon={faSave} />
-                        </button>
-                        <button
-                            className="icon-button"
-                            title="Delete"
-                            onClick={onDeletePostClicked}
-                        >
-                            <FontAwesomeIcon icon={faTrashCan} />
-                        </button>
-                    </div>
-                </div>
                 <label className="form__label" htmlFor="post-title">
                     Title:</label>
                 <input
@@ -107,14 +87,27 @@ const EditPostForm = ({ post, users }) => {
                     value={text}
                     onChange={onTextChanged}
                 />
-                <div className="form__row">
-                    
-                    <div className="form__divider">
                         <p className="form__created">Created:<br />{created}</p>
                         <p className="form__updated">Updated:<br />{updated}</p>
+                    <div className="form__action-buttons">
+                        <button
+                            className="icon-button"
+                            title="Save"
+                            onClick={onSavePostClicked}
+                            disabled={!canSave}
+                        >
+                            💾
+                        </button>
+                        <button
+                            className="icon-button"
+                            title="Delete"
+                            onClick={onDeletePostClicked}
+                        >
+                            🗑️
+                        </button>
                     </div>
-                </div>
             </form>
+            </main>
         </>
     )
 

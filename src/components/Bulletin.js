@@ -1,7 +1,7 @@
 import React from 'react'
 import { useGetPostsQuery } from "../features/posts/postsApiSlice"
 import Post from "../features/posts/Post"
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const Bulletin = () => {
     const {
@@ -15,6 +15,8 @@ const Bulletin = () => {
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true
     })
+    const navigate = useNavigate();
+    const getHome = ()=> {navigate('/')}
 
     let content
 
@@ -36,8 +38,8 @@ const Bulletin = () => {
             <div className="posts-list">
                 {postsListContent}
             </div>
-            <footer>
-                <Link to="/">Back to Home</Link>
+            <footer className='public-footer'>
+                <button onClick={getHome} title='get home' className='icon-button'>🏠</button>
             </footer>
             </>
         )

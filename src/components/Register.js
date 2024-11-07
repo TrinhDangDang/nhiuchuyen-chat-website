@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from "@fortawesome/free-solid-svg-icons"
-import { ROLES } from "../config/roles"
 import { useRegisterNewUserMutation } from "../features/users/usersApiSlice"
 
 const USER_REGEX = /^[A-z]{3,20}$/
@@ -22,7 +21,7 @@ const Register = () => {
     const [validUsername, setValidUsername] = useState(false)
     const [password, setPassword] = useState('')
     const [validPassword, setValidPassword] = useState(false)
-    const [roles, setRoles] = useState(["Employee"])
+    const [roles, setRoles] = useState(["User"])
 
     useEffect(() => {
         setValidUsername(USER_REGEX.test(username))
@@ -44,13 +43,6 @@ const Register = () => {
     const onUsernameChanged = e => setUsername(e.target.value)
     const onPasswordChanged = e => setPassword(e.target.value)
     
-    const onRolesChanged = e => {
-        const values = Array.from(
-            e.target.selectedOptions, //HTMLCollection 
-            (option) => option.value
-        )
-        setRoles(values)
-    }
 
     const canSave = [roles.length, validUsername, validPassword].every(Boolean) && !isLoading
 
@@ -65,20 +57,9 @@ const Register = () => {
         }
     }
 
-    const options = Object.values(ROLES).map(role => {
-        return (
-            <option
-                key={role}
-                value={role}
-
-            > {role}</option >
-        )
-    })
-
     const errClass = isError ? "errmsg" : "offscreen"
     const validUserClass = !validUsername ? 'form__input--incomplete' : ''
     const validPwdClass = !validPassword ? 'form__input--incomplete' : ''
-    const validRolesClass = !Boolean(roles.length) ? 'form__input--incomplete' : ''
 
     const content = (
         <>
@@ -120,19 +101,7 @@ const Register = () => {
                     onChange={onPasswordChanged}
                 />
 
-                <label className="form__label" htmlFor="roles">
-                    ASSIGNED ROLES: User</label>
-                <select
-                    id="roles"
-                    name="roles"
-                    className={`form__select ${validRolesClass}`}
-                    multiple={true}
-                    size="3"
-                    value={roles}
-                    onChange={onRolesChanged}
-                >
-                    {options}
-                </select>
+                <label className="form__label" htmlFor="roles"> ASSIGNED ROLES: User</label>
 
             </form>
         </>
