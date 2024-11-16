@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
 
 * {
   margin: 0;
@@ -426,7 +426,7 @@ tr {
   }
 
   .dash-header {
-    padding: 0 1em;
+    padding: 1em;
   }
 
   .dash-container {
