@@ -23,6 +23,20 @@
   --TABLE-BGCOLOR: #FFF;
   --TABLE-COLOR: #000;
 }
+:root {
+  font-size: 16px; /* Default base size */
+}
+@media (max-width: 768px) {
+  :root {
+    font-size: 16px; /* Slightly smaller for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    font-size: 12px; /* Smallest for very small devices */
+  }
+}
 
 /* || UTILITY CLASSES */
 .errmsg {
@@ -116,6 +130,7 @@ a:focus-visible {
   min-width: 100px;
   cursor: pointer;
   text-align: center;
+  margin: 5px;
 }
 
 .dash-header__title:hover {
@@ -390,7 +405,7 @@ tr {
 }
 
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 480px) {
   h1 {
     font-size: 2rem;
   }
@@ -703,7 +718,7 @@ section.hi, .education, .me, .resume, .contact {
   }
 }
 
-@media (max-width: 400px){
+@media (max-width: 480px){
   .technology {
     font-size: medium;
   }
@@ -865,7 +880,7 @@ section.hi, .education, .me, .resume, .contact {
 
 .linkedin-icon {
   color: #0e76a8; 
-  font-size: 40px;
+  font-size: 2rem;
   margin-right: 10px;
   transition: color 0.3s;
   display: inline-block;
