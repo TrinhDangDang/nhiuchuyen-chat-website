@@ -96,25 +96,25 @@ const About = () => {
     // { name: 'C++', emoji: '➕' },
     // { name: 'Java', emoji: '☕️' },
     // { name: 'C#', emoji: '🎯' },
-    { name: "SQL", emoji: "🗄️" },
+    // { name: "SQL", emoji: "🗄️" },
 
     // Markup and Styling Languages
-    { name: "HTML", emoji: "📄" },
-    { name: "CSS", emoji: "🎨" },
+    // { name: "HTML", emoji: "📄" },
+    // { name: "CSS", emoji: "🎨" },
 
     // Frameworks and Libraries
-    { name: "React", emoji: "⚛️" },
+    // { name: "React", emoji: "⚛️" },
     // { name: 'Redux', emoji: '🔄' },
     // { name: 'Express.js', emoji: '🚄' },
-    { name: "Node.js", emoji: "🌿" },
+    // { name: "Node.js", emoji: "🌿" },
     // { name: 'Unity', emoji: '🕹️' },
 
     // Databases
     // { name: 'MySQL', emoji: '🐬' },
-    { name: "MongoDB", emoji: "🍃" },
+    // { name: "MongoDB", emoji: "🍃" },
 
     // Tools and Others
-    { name: "Git", emoji: "🔀" },
+    // { name: "Git", emoji: "🔀" },
     { name: "...", emoji: "" },
     // { name: 'Blender', emoji: '🌀' },
   ];
@@ -145,7 +145,6 @@ const About = () => {
         <p>
           I am an aspiring Software Developer currently pursuing a Bachelor's
           Degree in Computer Science at the University of Houston Clear Lake.
-          Available for internships or full-time roles starting December 2024.
         </p>
       </section>
 
@@ -198,7 +197,7 @@ const About = () => {
       {TechnologyList}
 
       <section className="technologies">
-        <h2>A little bit of everything </h2>
+        <h2>Staying up-to-date with the latest technologies.</h2>
         <div className="technology-icons" ref={technologyIconsRef}>
           <div className="technology-icon" key="Python">
             🐍 Python
@@ -269,10 +268,11 @@ const About = () => {
           </a>{" "}
         </p>
         <p>
-          and this cards flipping game:  <a href="https://trinhdangdang.github.io/Flip-Card-Game/" target="_blank" rel="noopener noreferrer"><button>Flip-Card-Game</button></a> 🃏🎴
+          this cards flipping game:  <a href="https://trinhdangdang.github.io/Flip-Card-Game/" target="_blank" rel="noopener noreferrer"><button>Flip-Card-Game</button></a> 🃏🎴
         </p>
+        <p>and this full stack portfolio website with real-time chat app when you create an account and login</p>
         <p>
-          You can find more on my Github:  <FontAwesomeIcon icon={faGithub} className="Github-icon" /> <a href="https://github.com/TrinhDangDang" target="_blank" rel="noopener noreferrer"><button>GitHub Profile</button></a>
+          <FontAwesomeIcon icon={faGithub} className="Github-icon" /> <a href="https://github.com/TrinhDangDang" target="_blank" rel="noopener noreferrer"><button>GitHub Profile</button></a>
         </p>
         <p>
           writings

@@ -16,6 +16,7 @@ import Prefetch from './features/auth/Prefetch'
 import PersistLogin from './features/auth/PersistLogin'
 import RequireAuth from './features/auth/RequireAuth'
 import About from './components/About';
+import Chat from './features/chat/Chat';
 import { ROLES } from './config/roles'
 import useTitle from './hooks/useTitle';
 
@@ -37,9 +38,9 @@ function App() {
           <Route element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}>
             <Route element={<Prefetch />}>
               <Route path="dash" element={<DashLayout />}>
-
                 <Route index element={<Welcome />} />
                 <Route path="about" element={<About/>}/>
+                <Route path="chat" element={<Chat/>}/>
                 <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
                   <Route path="users">
                     <Route index element={<UsersList />} />

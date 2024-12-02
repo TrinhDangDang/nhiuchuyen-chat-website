@@ -2,11 +2,10 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { setCredentials } from '../../features/auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'https://api.trinhdangdang.com',
+     baseUrl: 'http://localhost:3500', // https://api.trinhdangdang.com
     credentials: 'include',             //ensures that cookies are included in requests
     prepareHeaders: (headers, { getState }) => {
-        const token = getState().auth.token
-
+        const token = getState().auth.token //get token from the auth state
         if (token) {
             headers.set("authorization", `Bearer ${token}`)
         }
@@ -14,26 +13,20 @@ const baseQuery = fetchBaseQuery({
     }
 })
 
+
+//baseQueryWithReauth is a custom baseQuery function that extends fetchBaseQuery 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
-    // console.log(args) // request url, method, body
-    // console.log(api) // signal, dispatch, getState()
-    // console.log(extraOptions) //custom like {shout: true}
 
-    let result = await baseQuery(args, api, extraOptions)
+    let result = await baseQuery(args, api, extraOptions) //attemp the original request baseQuery 
 
-    // If you want, handle other status codes, too
     if (result?.error?.status === 403) {
         console.log('sending refresh token')
 
-        // send refresh token to get new access token 
         const refreshResult = await baseQuery('/auth/refresh', api, extraOptions)
 
         if (refreshResult?.data) {
-            console.log('New Access Token:', refreshResult.data.accessToken);
-            // store the new token 
+            // console.log('New Access Token:', refreshResult.data.accessToken);
             api.dispatch(setCredentials({ ...refreshResult.data }))
-            
-            // retry original query with new access token
             result = await baseQuery(args, api, extraOptions)
         } else {
 

@@ -17,7 +17,8 @@ export const postsApiSlice = apiSlice.injectEndpoints({
             validateStatus: (response, result) => {
                 return response.status === 200 && !result.isError
             },
-            transformResponse: responseData => {
+            transformResponse: (responseData) => {
+                // console.log("Raw API Response (responseData):", responseData)
                 const loadedPosts = responseData.map(post => {
                     post.id = post._id
                     return post

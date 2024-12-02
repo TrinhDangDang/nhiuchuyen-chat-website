@@ -37,6 +37,8 @@ const Welcome = () => {
 
             <p><Link to="/dash/posts/new">Add New Post ➕</Link></p>
 
+            <p><Link to="/dash/chat">Chat with other users 🐧💬🐧</Link></p>
+
             {(isAdmin) && <p><Link to="/dash/users">View User Settings</Link></p>}
 
             {(isAdmin) && <p><Link to="/dash/users/new">Add New User</Link></p>}

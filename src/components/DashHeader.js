@@ -19,7 +19,7 @@ const DashHeader = () => {
         error
     }] = useSendLogoutMutation()
 
-    console.log(isSuccess)
+    // console.log(isSuccess)
 
     const onNewPostClicked = () => navigate('/dash/posts/new')
     const onNewUserClicked = () => navigate('/dash/users/new')
