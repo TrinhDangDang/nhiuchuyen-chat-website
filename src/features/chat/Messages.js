@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useGetMessagesQuery} from './messagesApiSlice';
 import useAuth from '../../hooks/useAuth';
 import { useSelector } from 'react-redux';
 import { selectSelectedFriend } from '../../app/chatSlice';
+import { useSocket } from './SocketContext';
+import { selectUsersData } from '../users/usersApiSlice';
 
 
 
@@ -25,13 +27,25 @@ const Messages = ({ /* friendId, */ avatar,/*  socket */ }) => {
     const [text, setText] = useState("")
     const {userId} = useAuth()
     const [isLoadingMessages, setIsLoadingMessages] = useState(true);
-    const socket = useSelector((state) => state.chat.socket)
+    const socket = useSocket()
+    const users = useSelector(selectUsersData)
+    // const selectedFriend = users.find(obj => obj.id === friendId)
+    const user = users.entities?.[friendId];
+    const selectedFriendName = user?.fullname || user?.username || "Unknown User";
 
     // Reset texts and set loading state when switching conversations
     useEffect(() => {
         setTexts({ ids: [], entities: {} });
         setIsLoadingMessages(true);
     }, [friendId]);
+
+
+    useEffect(() => {
+    if (isMessagesError) {
+        console.error(messagesError?.data?.message); // Log error or handle as needed
+        setTexts({ ids: [], entities: {} }); // Clear texts only on error
+    }
+}, [isMessagesError, messagesError]);
 
     // Update texts when messages are successfully fetched
     useEffect(() => {
@@ -70,10 +84,11 @@ const Messages = ({ /* friendId, */ avatar,/*  socket */ }) => {
     
     const sendText = (e) => {
         e.preventDefault()
+        if (text) {
         const tempId = new Date().getTime(); // Temporary unique ID (can also use UUID)
         const newMessage = {
             _id: tempId, // Temporary ID
-            senderId: userId, // Assuming `userId` is available from `useAuth` or props
+            senderId: userId, 
             receiverId: friendId,
             message: text,
         };
@@ -91,7 +106,7 @@ const Messages = ({ /* friendId, */ avatar,/*  socket */ }) => {
 
         // Clear the input field
         setText("");
-
+        }
     }
 
     // const [sendMessage, {
@@ -125,9 +140,9 @@ const Messages = ({ /* friendId, */ avatar,/*  socket */ }) => {
 
 if (isMessagesLoading || isMessagesFetching || isLoadingMessages) {
     content = <p>Loading messages...</p>;
-} else if (isMessagesError) {
-    content = <p>Error loading messages: {messagesError?.message}</p>;
-} else if (isMessagesSuccess && messages) {
+} else if (texts.ids.length === 0) {
+    content = <p>{messagesError?.data?.message} with {selectedFriendName}</p>;
+} else if (texts?.ids.length>0) {
     const ids = texts.ids || [];
     const messagesList = ids.length
         ? ids.map((messageId) => {

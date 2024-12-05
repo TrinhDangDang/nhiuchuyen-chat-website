@@ -3,17 +3,22 @@ import { useGetConversationsQuery } from './messagesApiSlice';
 import useAuth from '../../hooks/useAuth';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { selectOnlineUsers } from '../../app/chatSlice';
+import { selectNotifications, selectOnlineUsers, selectSelectedFriend, setSelectedFriend } from '../../app/chatSlice';
+import { selectUsersData } from '../users/usersApiSlice';
 
-const Conversations = ({users}) => {
+
+const Conversations = (/* {users} */) => {
     // Fetch conversations data
+    const selectedFriend = useSelector(selectSelectedFriend)
+    const users = useSelector(selectUsersData)
+    console.log(users)
     const {
         data: conversations,
         isLoading: isConversationsLoading,
         isSuccess: isConversationsSuccess,
         isError: isConversationsError,
         error: conversationsError,
-    } = useGetConversationsQuery(undefined, {
+    } = useGetConversationsQuery(selectedFriend, {
         pollingInterval: 60000,
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true,
@@ -35,6 +40,9 @@ const Conversations = ({users}) => {
     const { userId } = useAuth();
     const dispatch = useDispatch()
     const onlineUsers = useSelector(selectOnlineUsers)
+    console.log("online users in conversations panel", onlineUsers)
+    const notifications = useSelector(selectNotifications)
+ 
 
     // const changeRecipient = (value) => {
     //   changeConversation(value)
@@ -52,6 +60,7 @@ const Conversations = ({users}) => {
             </p>
         );
     } else if (isConversationsSuccess ) {
+        console.log("conversations",conversations)
         const ids = conversations.ids || [];
         recipient = ids.map((id) => {
             const participants = conversations.entities[id].participants;
@@ -60,8 +69,9 @@ const Conversations = ({users}) => {
             const recipientName = recipientData?.fullname || recipientData?.username || 'Unknown';
             const recipientPic = recipientData?.profilePic || "https://api.dicebear.com/9.x/thumbs/svg?seed=Emery";
             return (
-                <div className='conversation' onClick={()=> dispatch(recipientId)/* changeRecipient(recipientId) */} key={id}>
-                  <img className='profilePic' src={recipientPic} alt='profilePicture'/> {recipientName} {onlineUsers.includes(recipientId)? "🟢":""}
+                <div className={selectedFriend && selectedFriend  === recipientId? "current_conversation":"conversation"} onClick={()=> dispatch(setSelectedFriend(recipientId))/* changeRecipient(recipientId) */} key={id}>
+                  <div className='profilePicContainer'><img className='profilePic' src={recipientPic} alt='profilePicture'/> <span className='online_indicator'>{onlineUsers.includes(recipientId)? "🟢":""}</span></div> {recipientName} 
+                  {Object.keys(notifications).includes(recipientId)? "◽":""}
                 </div>
             );
         });
@@ -69,7 +79,7 @@ const Conversations = ({users}) => {
         recipient = <p>No conversations yet.</p>;
     }
 
-    return <div className='conversations'>{recipient}</div>;
+    return <div className='conversations'><p>recent conversations:</p>{recipient}</div>;
 };
 
 export default Conversations;

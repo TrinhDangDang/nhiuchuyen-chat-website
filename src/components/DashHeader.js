@@ -2,6 +2,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import useAuth from '../hooks/useAuth'
 import PulseLoader from 'react-spinners/PulseLoader'
+import { useSelector } from 'react-redux'
+import { selectNotifications } from '../app/chatSlice'
 
 const NOTES_REGEX = /^\/dash\/posts(\/)?$/
 const USERS_REGEX = /^\/dash\/users(\/)?$/
@@ -27,6 +29,11 @@ const DashHeader = () => {
     const onUsersClicked = () => navigate('/dash/users')
     const onSettingClicked = () => navigate('/dash')
     const onTitleClicked = () => navigate('/dash/about')
+    const onGamesClicked = () => navigate('/dash/games')
+    const onChitChatClicked = () => navigate('/dash/chat')
+    const notifications = useSelector(selectNotifications)
+    console.log("notifications", notifications)
+
     const handleLogout = async () => {
         try {
             const result = await sendLogout();
@@ -80,9 +87,8 @@ const DashHeader = () => {
             )
         }
     }
-
     let postsButton = null
-    if (!NOTES_REGEX.test(pathname) && pathname.includes('/dash')) {
+    if (!NOTES_REGEX.test(pathname) && pathname.includes('/dash')){
         postsButton = (
             <button
                 className="icon-button"
@@ -94,6 +100,25 @@ const DashHeader = () => {
         )
     }
 
+    const gameButton = (
+        <button
+            className="icon-button"
+            title="entertainment"
+            onClick={onGamesClicked}>
+            🕹️
+        </button>
+    )
+
+    const chatButton = (
+        <button
+            className='icon-button'
+            id='notification-icon'
+            title="chitchat"
+            onClick={onChitChatClicked}>
+            💬
+            {Object.keys(notifications).length !== 0? <span className='notifications_count'>{Object.keys(notifications).length}</span>: ""}
+        </button>
+    )
     const logoutButton = (
         <button
             className="icon-button"
@@ -126,9 +151,11 @@ const DashHeader = () => {
                 {settingButton}
                 {newPostButton}
                 {postsButton}
+                {gameButton}
                 <h1 className="dash-header__title" onClick={onTitleClicked} title='about Trinh'>Trinh Dang</h1>
                 {newUserButton}
                 {userButton}
+                {chatButton}
                 {logoutButton}
             </>
         )

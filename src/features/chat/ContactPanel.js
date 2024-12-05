@@ -19,7 +19,7 @@ const ContactPanel = () => {
         isError,
         error,
     } = useGetUsersQuery(undefined, {
-        pollingInterval: 60000,
+        pollingInterval: 600000,
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true,
     });
@@ -58,27 +58,29 @@ const ContactPanel = () => {
     // const changeConversation = (value) => {
     //     changeChatRecipient(value)
     // }
+    console.log("filtered users: ",filteredUsers)
     
     if (isLoading) {
         content = <p>Loading...</p>;
     } else if (isError) {
         content = <p className="errmsg">{error?.data?.message}</p>;
     } else if (isSuccess) {
-        content = (
+        content = filteredUsers.length ?(
                 searchQuery &&
                 <ul className='friends'>
                     {filteredUsers.map((user) => (
-                        <li className="friend" key={user.id} onClick={() => {dispatch(setSelectedFriend(user)); setSearchQuery("")}}>{user.profilePic? <img className="profilePic" src={user.profilePic} alt="User Profile"/>: <img className="profilePic" src="https://api.dicebear.com/9.x/thumbs/svg?seed=Emery" alt="User Profile"/> } {user.fullname? user.fullname :user.username} {onlineUsers.includes(user.id)? "🟢":""}</li>
+                        <li className="friend" key={user.id} onClick={() => {dispatch(setSelectedFriend(user.id)); setSearchQuery("")}}>{user.profilePic? <img className="profilePic" src={user.profilePic} alt="User Profile"/>: <img className="profilePic" src="https://api.dicebear.com/9.x/thumbs/svg?seed=Emery" alt="User Profile"/> } {user.fullname? user.fullname :user.username} {onlineUsers.includes(user.id)? "🟢":""}</li>
                     ))}
                 </ul>
+        ): (
+            <p>No users found matching your search.</p>
         );
     }
 
     return (
         <div className='contact_panel'>
-            <input className='usersSearch' type="text" placeholder="👀 Search users..." value={searchQuery} onChange={(e) =>setSearchQuery(e.target.value)}></input>
+            <input className='usersSearch' type="text" placeholder="Search Friends..." value={searchQuery} onChange={(e) =>setSearchQuery(e.target.value)}></input>
             {content}
-            <p>recent conversations:</p>
             {/* <Conversations changeConversation = {changeConversation} users={users} onlineUsers={onlineUsers}/> */}
             <Conversations/>
         </div>

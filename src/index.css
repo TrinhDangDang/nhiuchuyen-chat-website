@@ -78,6 +78,18 @@ button {
   transform: scale(1.2);
 }
 
+#notification-icon{
+  position: relative;
+}
+.notifications_count{
+  position: absolute;
+  font-size: 1rem;
+  bottom: 10px;
+  right: 10px;
+  color: #650000;
+  font-weight: bold;
+}
+
 .icon-button[disabled] {
   visibility: hidden;
 }
@@ -154,6 +166,7 @@ a:focus-visible {
   z-index: 20;
   position: sticky;
   top: 1em; 
+  max-height: 70px;
 }
 .dash-container {
   flex-grow: 1;
@@ -164,6 +177,20 @@ a:focus-visible {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.dash-container-background {
+  flex-grow: 1;
+  padding: 1em;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('https://media.giphy.com/media/3oKIPlB1nanDvSf5Ys/giphy.gif');
+  background-size: cover; /* Ensures the GIF covers the entire container */
+  background-position: center; /* Centers the GIF */
+  background-repeat: no-repeat; 
 }
 
 .dash-header__nav {
@@ -964,13 +991,14 @@ section.hi, .education, .me, .resume, .contact {
 }
 
 .friend:hover {
-  background-color: aliceblue;
+  background-color: #0e76a8;
   cursor: pointer;
 }
 
 .usersSearch{
+  text-align: center;
   width: 100%;
-  height: 60px;
+  height: 40px;
   background-color: #490000;
   color: white;
   border: none;
@@ -981,23 +1009,38 @@ section.hi, .education, .me, .resume, .contact {
   border: none;
 }
 
+
+.usersSearch:focus::placeholder {
+  color: transparent
+}
+
+
 .conversations{
   position: relative;
-  flex: auto;
+  flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
   scrollbar-width: thin;
 }
 
+.current_conversation{
+  display: flex;
+  align-items: center;
+  border-radius: 3px; 
+  background-color: #0e76a8;
+}
+
+
 .conversation {
   display: flex;
   align-items: center;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 
 .conversation:hover{
   background-color: #0e76a8;
   cursor: pointer;
+  background-color: #978e8e;
 }
 
 
@@ -1010,17 +1053,35 @@ section.hi, .education, .me, .resume, .contact {
   width: 60%;
 }
 
+.profilePicContainer{
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
 
+.online_indicator {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+}
 
+.profilePicOnTopChat{
+  height: 40px;
+  width: 40px;
+  margin-right: 20px;
+  padding: 2px;
+  border-radius: 3px;
+}
 .profilePic {
-  border-radius: 5px;
-  height: 50px;
-  width: 50px;
-  margin: 5px;
-  background-color: beige;
+  border-radius: 3px;
+  height: 45px;
+  width: 45px;
+  margin-right: 10px;
+  margin: 3px;
 }
 
 .contactOnTopofChat {
+  height: 40px;
   display: flex;
   align-items: center;
   background-color: #005582;
@@ -1037,6 +1098,7 @@ section.hi, .education, .me, .resume, .contact {
 .sendForm{
   width: 100%;
   display: flex;
+  min-height: 40px;
 }
 
 .chat_input{
@@ -1068,7 +1130,7 @@ section.hi, .education, .me, .resume, .contact {
 
 .messageFrom {
   text-align: left;
-  background-color: #005582;
+  background-color: #2e84b2;
   align-self: start;
   margin: 5px;
   border-radius: 5px;
@@ -1086,4 +1148,18 @@ section.hi, .education, .me, .resume, .contact {
 
 
 
+.game_slides {
+  display: flex;
+  width: 50vw;
+  justify-content: space-between;
+  max-width: 500px;
+  align-items: center;
+}
 
+.spongebob {
+  font-size: 8em;
+}
+
+.card-flipping{
+  font-size: 8em;
+}
