@@ -270,7 +270,7 @@ const About = () => {
         <p>
           this cards flipping game:  <a href="https://trinhdangdang.github.io/Flip-Card-Game/" target="_blank" rel="noopener noreferrer"><button>Flip-Card-Game</button></a> 🃏🎴
         </p>
-        <p>and this full stack portfolio website with real-time chat function when you create an login after creating your account</p>
+        <p>and this full stack portfolio website with real-time chat function when you login after creating your account</p>
         <p>
           <FontAwesomeIcon icon={faGithub} className="Github-icon" /> <a href="https://github.com/TrinhDangDang" target="_blank" rel="noopener noreferrer"><button>GitHub Profile</button></a>
         </p>
