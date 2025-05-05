@@ -6,7 +6,7 @@ import { useGetMessagesQuery } from "./messagesApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useSocket } from "./SocketContext";
 
-const MessagePanel = () => {
+const MessagePanel = ({ showFriendProfile, setShowFriendProfile }) => {
   const selectedFriend = useSelector(selectSelectedFriend);
   const users = useSelector(selectUsersData);
   const { userId } = useAuth();
@@ -104,7 +104,6 @@ const MessagePanel = () => {
     }
   };
 
-  // Handle loading & fallback states
   if (!selectedFriend)
     return (
       <div className="flex-1 flex items-center justify-center text-gray-500 bg-white">
@@ -145,6 +144,12 @@ const MessagePanel = () => {
           alt={fullname}
         />
         <h2 className="text-lg font-semibold text-gray-800">{fullname}</h2>
+        <button
+          onClick={() => setShowFriendProfile((prev) => !prev)}
+          className="text-sm text-blue-600 hover:underline"
+        >
+          {showFriendProfile ? "Hide Info" : "View Info"}
+        </button>
       </header>
 
       {/* Messages and Input */}
@@ -156,17 +161,18 @@ const MessagePanel = () => {
           {texts.ids.length > 0 ? (
             texts.ids.map((id) => {
               const msg = texts.entities[id];
-              const isFriend = msg.receiverId === selectedFriend;
+              const isSentByMe = msg.senderId === userId;
+
               return (
                 <div
                   key={id}
                   className={`max-w-xs px-3 py-2 rounded shadow-sm break-words ${
-                    isFriend
-                      ? "bg-gray-200 text-gray-900 self-start"
-                      : "bg-blue-600 text-white self-end ml-auto flex items-center gap-2"
+                    isSentByMe
+                      ? "bg-blue-600 text-white self-end ml-auto flex items-center gap-2"
+                      : "bg-gray-200 text-gray-900 self-start"
                   }`}
                 >
-                  {!isFriend && (
+                  {!isSentByMe && (
                     <img
                       src={pic}
                       alt="avatar"

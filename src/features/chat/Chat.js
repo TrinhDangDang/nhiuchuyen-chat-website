@@ -2,9 +2,11 @@ import React from "react";
 import ProfilePanel from "./ProfilePanel";
 import ContactPanel from "./ContactPanel";
 import MessagePanel from "./MessagePanel";
+import { useState } from "react";
 import FriendProfilePanel from "./FriendProfilePanel";
 
 const Chat = () => {
+  const [showFriendProfile, setShowFriendProfile] = useState(true);
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Left - Profile */}
@@ -18,14 +20,23 @@ const Chat = () => {
       </div>
 
       {/* Message Panel */}
-      <div className="w-2/3 md:w-2/5 h-full border-r border-gray-300 bg-white">
-        <MessagePanel />
+      <div
+        className={`h-full border-r border-gray-300 bg-white ${
+          showFriendProfile ? "w-2/3 md:w-2/5" : "w-full md:w-4/5"
+        }`}
+      >
+        <MessagePanel
+          showFriendProfile={showFriendProfile}
+          setShowFriendProfile={setShowFriendProfile}
+        />
       </div>
 
       {/* Friend Profile */}
-      <div className="hidden md:block w-1/5 h-full bg-white">
-        <FriendProfilePanel />
-      </div>
+      {showFriendProfile && (
+        <div className="hidden md:block w-1/5 bg-white border-l border-gray-300">
+          <FriendProfilePanel />
+        </div>
+      )}
     </div>
   );
 };

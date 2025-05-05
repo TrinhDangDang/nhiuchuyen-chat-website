@@ -55,6 +55,17 @@ export const messagesApiSlice = apiSlice.injectEndpoints({
             ]
           : [{ type: "Conversation", id: "LIST" }],
     }),
+
+    deleteConversations: builder.mutation({
+      query: (recipientId) => ({
+        url: `/message/conversation/${recipientId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, recipientId) => [
+        { type: "Conversation", id: "LIST" },
+        { type: "Message", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -62,6 +73,7 @@ export const {
   useGetMessagesQuery,
   useSendMessageMutation,
   useGetConversationsQuery,
+  useDeleteConversationsMutation,
 } = messagesApiSlice;
 
 export const selectMessagesResult =

@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Conversations from "./Conversations";
 import useAuth from "../../hooks/useAuth";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { selectOnlineUsers, setSelectedFriend } from "../../app/chatSlice";
+import {
+  selectOnlineUsers,
+  setSelectedFriend,
+  setOnlineUsers,
+} from "../../app/chatSlice";
 import SearchInput from "./SearchInput";
+import { useSocket } from "./SocketContext"; // 👈 make sure you’re using your socket here
 
 const ContactPanel = () => {
   const dispatch = useDispatch();
   const onlineUsers = useSelector(selectOnlineUsers);
   const { userId } = useAuth();
+  const socket = useSocket(); // 👈 Grab socket from context
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -25,14 +31,31 @@ const ContactPanel = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleOnlineUsers = (data) => {
+      dispatch(setOnlineUsers(data));
+    };
+
+    socket.on("onlineUsers", handleOnlineUsers);
+
+    return () => {
+      socket.off("onlineUsers", handleOnlineUsers);
+    };
+  }, [socket, dispatch]);
+
   const filteredUsers = users
     ? users.ids
         .map((id) => users.entities[id])
-        .filter(
-          (user) =>
+        .filter((user) => {
+          const query = searchQuery.toLowerCase();
+          return (
             user.id !== userId &&
-            user.username.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+            (user.username.toLowerCase().includes(query) ||
+              user.fullname?.toLowerCase().includes(query))
+          );
+        })
     : [];
 
   let content;
@@ -45,7 +68,7 @@ const ContactPanel = () => {
         {error?.data?.message || "Error loading users."}
       </p>
     );
-  } else if (isSuccess && searchQuery) {
+  } else if (searchQuery && isSuccess) {
     content = filteredUsers.length ? (
       <ul className="space-y-2 mt-4">
         {filteredUsers.map((user) => (
@@ -83,24 +106,15 @@ const ContactPanel = () => {
 
   return (
     <div className="w-full h-full bg-white border-r border-gray-200 p-4 overflow-y-auto flex flex-col">
-      {/* Header with title and New Chat button */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800">Chats</h2>
-        <button
-          className="text-sm px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-          onClick={() => alert("New conversation modal goes here")}
-        >
-          New Chat
-        </button>
       </div>
 
-      {/* Search */}
       <SearchInput
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      {/* User search results OR fallback to conversation list */}
       {searchQuery ? content : <Conversations />}
     </div>
   );

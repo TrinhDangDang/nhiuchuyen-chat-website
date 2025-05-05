@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { useGetConversationsQuery } from "./messagesApiSlice";
+import {
+  useGetConversationsQuery,
+  useDeleteConversationsMutation,
+} from "./messagesApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,15 +14,18 @@ import {
 import { selectUsersData } from "../users/usersApiSlice";
 
 const Conversations = () => {
+  const [deleteConversation, { isLoading: isDeleting }] =
+    useDeleteConversationsMutation();
   const selectedFriend = useSelector(selectSelectedFriend);
   const users = useSelector(selectUsersData);
+
   const {
     data: conversations,
     isLoading: isConversationsLoading,
     isSuccess: isConversationsSuccess,
     isError: isConversationsError,
     error: conversationsError,
-  } = useGetConversationsQuery(selectedFriend, {
+  } = useGetConversationsQuery(undefined, {
     pollingInterval: 60000,
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -32,37 +38,43 @@ const Conversations = () => {
 
   const [dialog, setDialog] = useState({
     open: false,
-    conversationId: null,
+    recipientId: null,
     name: "",
   });
 
-  const handleDeleteConversation = (id, name) => {
-    setDialog({ open: true, conversationId: id, name });
+  const handleDeleteConversation = (recipientId, name) => {
+    setDialog({ open: true, recipientId, name });
   };
 
-  const confirmDelete = () => {
-    // TODO: integrate delete mutation
-    console.log("Deleting conversation:", dialog.conversationId);
-    setDialog({ open: false, conversationId: null, name: "" });
+  const confirmDelete = async () => {
+    try {
+      await deleteConversation(dialog.recipientId).unwrap();
+      if (selectedFriend === dialog.recipientId) {
+        dispatch(setSelectedFriend(null));
+      }
+      setDialog({ open: false, recipientId: null, name: "" });
+    } catch (err) {
+      console.error("Failed to delete conversation:", err);
+    }
   };
 
   const cancelDelete = () => {
-    setDialog({ open: false, conversationId: null, name: "" });
+    setDialog({ open: false, recipientId: null, name: "" });
   };
 
-  let recipient;
+  let content;
 
   if (isConversationsLoading || !users) {
-    recipient = <p className="text-gray-500">Loading conversations...</p>;
+    content = <p className="text-gray-500">Loading conversations...</p>;
   } else if (isConversationsError) {
-    recipient = (
+    content = (
       <p className="text-red-500">
         Error: {conversationsError?.message || "An error occurred"}
       </p>
     );
   } else if (isConversationsSuccess) {
     const ids = conversations.ids || [];
-    recipient = (
+    content = (
       <ul className="space-y-2">
         {ids.map((id) => {
           const participants = conversations.entities[id].participants;
@@ -100,12 +112,10 @@ const Conversations = () => {
                 <p className="font-medium text-gray-900">{recipientName}</p>
               </div>
               {hasNotification && <span className="text-lg">◽</span>}
-
-              {/* Delete button shown on hover */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeleteConversation(id, recipientName);
+                  handleDeleteConversation(recipientId, recipientName);
                 }}
                 className="hidden group-hover:block absolute right-3 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-700"
                 title="Delete conversation"
@@ -118,14 +128,13 @@ const Conversations = () => {
       </ul>
     );
   } else {
-    recipient = <p className="text-gray-500">No conversations yet.</p>;
+    content = <p className="text-gray-500">No conversations yet.</p>;
   }
 
   return (
     <div className="mt-4 relative">
-      {recipient}
+      {content}
 
-      {/* Delete confirmation dialog */}
       {dialog.open && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-80">
@@ -144,8 +153,9 @@ const Conversations = () => {
               <button
                 onClick={confirmDelete}
                 className="px-4 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+                disabled={isDeleting}
               >
-                Delete
+                {isDeleting ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
