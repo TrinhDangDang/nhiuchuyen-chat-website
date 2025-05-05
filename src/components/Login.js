@@ -6,7 +6,6 @@ import { useLoginMutation } from "../features/auth/authApiSlice";
 import usePersist from "../hooks/usePersist";
 import useTitle from "../hooks/useTitle";
 import PulseLoader from "react-spinners/PulseLoader";
-import { FaUserAlt, FaLock } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Login = () => {
@@ -54,7 +53,7 @@ const Login = () => {
     }
   };
 
-  const errClass = errMsg ? "text-red-500 text-sm mb-2 text-center" : "sr-only";
+  const errClass = errMsg ? "text-red-500 text-sm mb-4 text-center" : "sr-only";
 
   if (isLoading) {
     return (
@@ -65,103 +64,111 @@ const Login = () => {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center animate-gradient">
-      <section className="w-full max-w-md bg-white/30 backdrop-blur-md p-8 rounded-2xl shadow-2xl animate-fade-in hover:scale-[1.01] transition-transform duration-300 border border-white/40">
+    <main className="min-h-screen flex flex-col md:flex-row bg-[#f9fafe]">
+      {/* Left: Branding */}
+      <div className="relative w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-purple-500 to-indigo-500 text-white p-10">
         <motion.h1
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-5xl text-white font-bold text-center drop-shadow mb-2"
+          transition={{ duration: 1 }}
+          className="text-5xl font-extrabold text-center mb-4"
         >
-          ✨ Nhiều Chuyện
+          Nhiều Chuyện
         </motion.h1>
         <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-center text-white/80 italic mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-lg text-center max-w-md"
         >
-          Nơi tám chuyện mọi lúc, mọi nơi
+          Nơi tám chuyện, chia sẻ, và kết nối với mọi người!
         </motion.p>
 
-        <p ref={errRef} className={errClass} aria-live="assertive">
-          {errMsg}
-        </p>
+        <div className="absolute top-10 right-10 w-32 h-32 bg-pink-400 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute bottom-10 left-10 w-48 h-48 bg-blue-300 rounded-full blur-3xl opacity-20"></div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="username"
-              className="block mb-1 font-medium text-white"
-            >
-              Username
-            </label>
-            <div className="flex items-center border border-gray-300 rounded p-2 focus-within:ring focus-within:border-blue-500 bg-white/70">
-              <FaUserAlt className="text-gray-500 mr-2" />
+      {/* Right: Form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-10">
+        <div className="w-full max-w-md bg-white/50 backdrop-blur-md rounded-xl shadow-lg p-8">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+            Welcome Back 👋
+          </h2>
+          <p ref={errRef} className={errClass} aria-live="assertive">
+            {errMsg}
+          </p>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label
+                htmlFor="username"
+                className="block mb-1 font-medium text-gray-700"
+              >
+                Username
+              </label>
               <input
-                type="text"
                 id="username"
+                type="text"
                 ref={userRef}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="off"
                 required
-                className="w-full bg-transparent outline-none text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-indigo-500"
               />
             </div>
-          </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block mb-1 font-medium text-white"
-            >
-              Password
-            </label>
-            <div className="flex items-center border border-gray-300 rounded p-2 focus-within:ring focus-within:border-blue-500 bg-white/70">
-              <FaLock className="text-gray-500 mr-2" />
+            <div>
+              <label
+                htmlFor="password"
+                className="block mb-1 font-medium text-gray-700"
+              >
+                Password
+              </label>
               <input
-                type="password"
                 id="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-transparent outline-none text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-indigo-500"
               />
             </div>
-          </div>
 
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="persist"
-              checked={persist}
-              onChange={() => setPersist((prev) => !prev)}
-              className="h-4 w-4"
-            />
-            <label htmlFor="persist" className="text-sm text-white">
-              Trust this device
-            </label>
-          </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="persist"
+                checked={persist}
+                onChange={() => setPersist((prev) => !prev)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="persist" className="text-sm text-gray-600">
+                Trust this device
+              </label>
+            </div>
 
-          <div className="flex justify-between gap-2">
             <button
               type="submit"
-              className="relative group overflow-hidden w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl shadow-lg hover:from-indigo-600 hover:to-purple-600 transition-all"
+              className="w-full py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all"
             >
-              <span className="relative z-10">Sign In</span>
-              <span className="absolute left-0 top-0 h-full w-full bg-white opacity-10 group-hover:animate-ping"></span>
+              Sign In
             </button>
-            <button
-              type="button"
-              onClick={() => navigate("/create")}
-              className="w-full bg-white/80 text-gray-800 px-4 py-2 rounded-xl hover:bg-white transition"
-            >
-              Create Account
-            </button>
-          </div>
-        </form>
-      </section>
+
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/create")}
+                  className="text-indigo-600 hover:underline"
+                >
+                  Create one
+                </button>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
     </main>
   );
 };

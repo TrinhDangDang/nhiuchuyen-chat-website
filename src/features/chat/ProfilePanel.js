@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useSendLogoutMutation } from "../auth/authApiSlice";
@@ -18,18 +18,16 @@ const ProfilePanel = () => {
   });
 
   const [sendLogout] = useSendLogoutMutation();
-
   const currentUser = users?.entities?.[userId];
 
   const [isEditing, setIsEditing] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [editedStatus, setEditedStatus] = useState("");
-  const [theme, setTheme] = useState("light");
   const [password, setPassword] = useState("");
-
-  const [previewImage, setPreviewImage] = useState(null);
+  const [theme, setTheme] = useState("light");
   const [prompt, setPrompt] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -64,7 +62,7 @@ const ProfilePanel = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer YOUR_API_KEY`, // Replace with your secure API key
+          Authorization: `Bearer YOUR_API_KEY`,
         },
         body: JSON.stringify({
           prompt,
@@ -101,9 +99,10 @@ const ProfilePanel = () => {
   }
 
   return (
-    <div className="h-full p-4 flex flex-col bg-white overflow-y-auto">
-      <div className="flex flex-col items-center">
-        <div className="w-24 h-24 rounded-full bg-gray-300 mb-4 overflow-hidden relative">
+    <div className="h-full p-6 flex flex-col bg-white/60 backdrop-blur-md overflow-y-auto">
+      <div className="flex flex-col items-center mb-4">
+        {/* Avatar */}
+        <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-300 mb-4 shadow-lg">
           <img
             src={
               previewImage ||
@@ -115,23 +114,24 @@ const ProfilePanel = () => {
           />
         </div>
 
+        {/* Avatar Generation */}
         {isEditing && (
-          <div className="mb-4 w-full">
-            <label className="block text-sm text-gray-700 mb-1">
+          <div className="w-full mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Generate Avatar with AI
             </label>
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="e.g. dragon astronaut"
+                placeholder="e.g. neon samurai"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="flex-1 border px-2 py-1 rounded"
+                className="flex-1 border rounded px-2 py-1 text-sm"
               />
               <button
                 type="button"
                 onClick={generateAvatar}
-                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
               >
                 Generate
               </button>
@@ -139,87 +139,87 @@ const ProfilePanel = () => {
           </div>
         )}
 
+        {/* Name & Status */}
         {isEditing ? (
-          <input
-            value={editedName}
-            onChange={(e) => setEditedName(e.target.value)}
-            className="text-xl font-semibold mb-2 text-center border rounded px-2 py-1"
-          />
+          <>
+            <input
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+              className="text-lg font-semibold mb-2 border px-2 py-1 rounded w-full text-center"
+            />
+            <input
+              value={editedStatus}
+              onChange={(e) => setEditedStatus(e.target.value)}
+              className="text-sm text-gray-500 border px-2 py-1 rounded w-full text-center mb-4"
+            />
+          </>
         ) : (
-          <h2 className="text-xl font-semibold mb-2">
-            {currentUser.fullname || currentUser.username}
-          </h2>
-        )}
-
-        {isEditing ? (
-          <input
-            value={editedStatus}
-            onChange={(e) => setEditedStatus(e.target.value)}
-            className="text-sm text-gray-500 mb-6 border rounded px-2 py-1"
-          />
-        ) : (
-          <p className="text-sm text-gray-500 mb-6 flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full inline-block" />
-            Available
-          </p>
+          <>
+            <h2 className="text-lg font-bold mb-1">
+              {currentUser.fullname || currentUser.username}
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">🟢 Available</p>
+          </>
         )}
       </div>
 
-      <div className="w-full">
+      {/* Actions */}
+      <div className="w-full flex flex-col space-y-2 text-sm">
         {isEditing ? (
           <button
             onClick={handleSave}
-            className="w-full text-left text-green-600 hover:underline mb-2"
+            className="text-green-600 hover:underline text-left"
           >
-            Save
+            ✅ Save Changes
           </button>
         ) : (
           <button
             onClick={handleEdit}
-            className="w-full text-left text-blue-600 hover:underline mb-2"
+            className="text-indigo-600 hover:underline text-left"
           >
-            Edit Profile
+            ✏️ Edit Profile
           </button>
         )}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="w-full text-left text-blue-600 hover:underline mb-2"
+          className="text-indigo-600 hover:underline text-left"
         >
-          {showSettings ? "Hide Settings" : "Settings"}
+          {showSettings ? "🔽 Hide Settings" : "⚙️ Settings"}
         </button>
         <button
           onClick={handleLogout}
-          className="w-full text-left text-red-600 hover:underline"
+          className="text-red-600 hover:underline text-left"
         >
-          Logout
+          🚪 Logout
         </button>
       </div>
 
+      {/* Settings Panel */}
       {showSettings && (
-        <div className="mt-4 border-t pt-4">
-          <h3 className="text-md font-semibold mb-2">Settings</h3>
-
-          <div className="mb-4">
-            <label className="block text-sm text-gray-700 mb-1">
+        <div className="mt-5 pt-4 border-t border-gray-300 text-sm space-y-4">
+          {/* Password */}
+          <div>
+            <label className="block mb-1 text-gray-700 font-medium">
               Change Password
             </label>
             <input
               type="password"
+              placeholder="New password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border rounded px-2 py-1"
-              placeholder="New password"
             />
             <button
               onClick={handlePasswordChange}
-              className="mt-2 text-sm text-blue-600 hover:underline"
+              className="mt-2 text-blue-600 hover:underline"
             >
               Update Password
             </button>
           </div>
 
+          {/* Theme */}
           <div>
-            <label className="block text-sm text-gray-700 mb-1">
+            <label className="block mb-1 text-gray-700 font-medium">
               Theme Preference
             </label>
             <select

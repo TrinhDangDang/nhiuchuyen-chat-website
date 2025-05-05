@@ -9,13 +9,14 @@ import {
   setOnlineUsers,
 } from "../../app/chatSlice";
 import SearchInput from "./SearchInput";
-import { useSocket } from "./SocketContext"; // 👈 make sure you’re using your socket here
+import { useSocket } from "./SocketContext";
+import { FaUserFriends } from "react-icons/fa";
 
 const ContactPanel = () => {
   const dispatch = useDispatch();
   const onlineUsers = useSelector(selectOnlineUsers);
   const { userId } = useAuth();
-  const socket = useSocket(); // 👈 Grab socket from context
+  const socket = useSocket();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,7 +62,7 @@ const ContactPanel = () => {
   let content;
 
   if (isLoading) {
-    content = <p className="text-gray-500 mt-4">Loading...</p>;
+    content = <p className="text-gray-500 mt-4">Loading users...</p>;
   } else if (isError) {
     content = (
       <p className="text-red-500 mt-4">
@@ -70,51 +71,59 @@ const ContactPanel = () => {
     );
   } else if (searchQuery && isSuccess) {
     content = filteredUsers.length ? (
-      <ul className="space-y-2 mt-4">
+      <ul className="space-y-3 mt-4">
         {filteredUsers.map((user) => (
           <li
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
             key={user.id}
             onClick={() => {
               dispatch(setSelectedFriend(user.id));
               setSearchQuery("");
             }}
+            className="flex items-center gap-4 p-3 bg-white/70 hover:bg-white/90 rounded-lg shadow cursor-pointer transition-all"
           >
-            <img
-              className="w-10 h-10 rounded-full"
-              src={
-                user.profilePic ||
-                "https://api.dicebear.com/9.x/thumbs/svg?seed=Emery"
-              }
-              alt="User Profile"
-            />
-            <span className="text-gray-800 font-medium truncate">
-              {user.fullname || user.username}
-            </span>
-            {onlineUsers.includes(user.id) && (
-              <span className="text-green-500 text-sm">●</span>
-            )}
+            <div className="relative">
+              <img
+                src={
+                  user.profilePic ||
+                  "https://api.dicebear.com/9.x/thumbs/svg?seed=Emery"
+                }
+                alt="User Profile"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              {onlineUsers.includes(user.id) && (
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-ping"></span>
+              )}
+            </div>
+            <div className="flex-1 truncate">
+              <p className="font-medium text-gray-800 truncate">
+                {user.fullname || user.username}
+              </p>
+            </div>
           </li>
         ))}
       </ul>
     ) : (
-      <p className="text-sm text-gray-500 mt-4">
-        No users found matching your search.
-      </p>
+      <p className="text-sm text-gray-500 mt-4">No users found.</p>
     );
   }
 
   return (
-    <div className="w-full h-full bg-white border-r border-gray-200 p-4 overflow-y-auto flex flex-col">
+    <div className="w-full h-full bg-white/60 backdrop-blur-sm border-r border-gray-200 p-4 overflow-y-auto flex flex-col">
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Chats</h2>
+        <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <FaUserFriends className="text-indigo-500" />
+          Conversations
+        </h2>
       </div>
 
+      {/* Search */}
       <SearchInput
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
+      {/* Content */}
       {searchQuery ? content : <Conversations />}
     </div>
   );

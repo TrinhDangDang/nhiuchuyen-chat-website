@@ -1,41 +1,42 @@
-import React from "react";
+// Chat.js
+import React, { useState } from "react";
 import ProfilePanel from "./ProfilePanel";
 import ContactPanel from "./ContactPanel";
 import MessagePanel from "./MessagePanel";
-import { useState } from "react";
 import FriendProfilePanel from "./FriendProfilePanel";
 
 const Chat = () => {
   const [showFriendProfile, setShowFriendProfile] = useState(true);
+
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
-      {/* Left - Profile */}
-      <div className="hidden md:block w-1/5 h-full border-r border-gray-300 bg-white">
+    <div className="h-screen w-full flex bg-gradient-to-tr from-indigo-50 to-white overflow-hidden">
+      {/* Profile Sidebar */}
+      <aside className="hidden md:block w-1/5 bg-white shadow-inner border-r">
         <ProfilePanel />
-      </div>
+      </aside>
 
-      {/* Conversations */}
-      <div className="w-1/3 md:w-1/5 h-full border-r border-gray-300 bg-white">
+      {/* Contact List */}
+      <aside className="w-1/3 md:w-1/5 bg-white shadow-inner border-r">
         <ContactPanel />
-      </div>
+      </aside>
 
-      {/* Message Panel */}
-      <div
-        className={`h-full border-r border-gray-300 bg-white ${
+      {/* Messages */}
+      <main
+        className={`h-full transition-all duration-300 ease-in-out ${
           showFriendProfile ? "w-2/3 md:w-2/5" : "w-full md:w-4/5"
-        }`}
+        } bg-white`}
       >
         <MessagePanel
           showFriendProfile={showFriendProfile}
           setShowFriendProfile={setShowFriendProfile}
         />
-      </div>
+      </main>
 
-      {/* Friend Profile */}
+      {/* Friend Info */}
       {showFriendProfile && (
-        <div className="hidden md:block w-1/5 bg-white border-l border-gray-300">
+        <aside className="hidden md:block w-1/5 bg-white shadow-inner border-l">
           <FriendProfilePanel />
-        </div>
+        </aside>
       )}
     </div>
   );

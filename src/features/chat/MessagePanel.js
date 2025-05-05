@@ -106,8 +106,8 @@ const MessagePanel = ({ showFriendProfile, setShowFriendProfile }) => {
 
   if (!selectedFriend)
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-500 bg-white">
-        <p>chit chat to not be sad</p>
+      <div className="flex-1 flex items-center justify-center text-gray-400 bg-white">
+        <p>Select a conversation to begin chatting</p>
       </div>
     );
 
@@ -137,54 +137,56 @@ const MessagePanel = ({ showFriendProfile, setShowFriendProfile }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <header className="p-4 bg-white border-b border-gray-200 shadow flex items-center gap-3">
+      <header className="p-4 bg-white border-b shadow flex items-center gap-3">
         <img
           className="w-10 h-10 rounded-full object-cover"
           src={pic}
           alt={fullname}
         />
-        <h2 className="text-lg font-semibold text-gray-800">{fullname}</h2>
+        <div className="flex-1">
+          <h2 className="text-md font-semibold text-gray-800">{fullname}</h2>
+          <p className="text-xs text-green-500">Online</p>
+        </div>
         <button
           onClick={() => setShowFriendProfile((prev) => !prev)}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-indigo-600 hover:underline"
         >
           {showFriendProfile ? "Hide Info" : "View Info"}
         </button>
       </header>
 
-      {/* Messages and Input */}
+      {/* Messages */}
       <div className="flex flex-col flex-1 overflow-hidden">
         <div
           ref={messagesContainerRef}
-          className="flex-1 overflow-y-auto space-y-3 px-2 py-4"
+          className="flex-1 overflow-y-auto space-y-4 px-4 py-6 bg-gradient-to-b from-white to-indigo-50"
         >
           {texts.ids.length > 0 ? (
             texts.ids.map((id) => {
               const msg = texts.entities[id];
-              const isSentByMe = msg.senderId === userId;
+              const isMe = msg.senderId === userId;
 
               return (
                 <div
                   key={id}
-                  className={`max-w-xs px-3 py-2 rounded shadow-sm break-words ${
-                    isSentByMe
-                      ? "bg-blue-600 text-white self-end ml-auto flex items-center gap-2"
-                      : "bg-gray-200 text-gray-900 self-start"
-                  }`}
+                  className={`flex ${
+                    isMe ? "justify-end" : "justify-start"
+                  } transition-all`}
                 >
-                  {!isSentByMe && (
-                    <img
-                      src={pic}
-                      alt="avatar"
-                      className="w-6 h-6 rounded-full"
-                    />
-                  )}
-                  {msg.message}
+                  <div
+                    className={`max-w-xs px-4 py-2 rounded-xl shadow text-sm ${
+                      isMe
+                        ? "bg-indigo-600 text-white rounded-br-none"
+                        : "bg-gray-200 text-gray-900 rounded-bl-none"
+                    }`}
+                  >
+                    {msg.message}
+                  </div>
                 </div>
               );
             })
           ) : (
-            <p className="text-gray-500 italic text-sm px-2">
+            <p className="text-gray-500 italic text-sm text-center">
               {isMessagesLoading || isMessagesFetching || isLoadingMessages
                 ? "Loading messages..."
                 : `No messages with ${fullname}`}
@@ -192,17 +194,21 @@ const MessagePanel = ({ showFriendProfile, setShowFriendProfile }) => {
           )}
         </div>
 
-        <form onSubmit={sendText} className="flex gap-2 border-t p-4 bg-white">
+        {/* Input */}
+        <form
+          onSubmit={sendText}
+          className="flex gap-3 items-center border-t p-4 bg-white"
+        >
           <input
-            className="flex-1 p-2 border rounded shadow-sm"
+            className="flex-1 p-2 border rounded-full shadow-sm focus:outline-none focus:ring focus:border-indigo-500"
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Type a message..."
+            placeholder="Type something..."
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition"
           >
             Send
           </button>
