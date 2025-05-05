@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
 
 const SearchInput = () => {
   return (
-    <div>
-        Search
+    <div className="mb-4">
+      <input
+        type="text"
+        placeholder="Search users..."
+        className="w-full p-2 border border-gray-300 rounded shadow-sm"
+      />
     </div>
-  )
-}
+  );
+};
 
-export default SearchInput
+export default SearchInput;

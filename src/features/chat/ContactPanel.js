@@ -1,90 +1,109 @@
-import React, {useState, useEffect} from 'react';
-// import { useGetConversationsQuery } from './messagesApiSlice';
-import Conversations from './Conversations';
-import useAuth from '../../hooks/useAuth';
-import { useGetUsersQuery } from '../users/usersApiSlice';
-import { useDispatch } from 'react-redux';
-import { selectOnlineUsers, setSelectedFriend } from '../../app/chatSlice';
-import { useSelector } from 'react-redux';
+import React, { useState } from "react";
+import Conversations from "./Conversations";
+import useAuth from "../../hooks/useAuth";
+import { useGetUsersQuery } from "../users/usersApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectOnlineUsers, setSelectedFriend } from "../../app/chatSlice";
+import SearchInput from "./SearchInput";
 
 const ContactPanel = () => {
+  const dispatch = useDispatch();
+  const onlineUsers = useSelector(selectOnlineUsers);
+  const { userId } = useAuth();
 
-    const dispatch = useDispatch()
-    const onlineUsers = useSelector(selectOnlineUsers)
-    
-    const {
-        data: users,
-        isLoading,
-        isSuccess,
-        isError,
-        error,
-    } = useGetUsersQuery(undefined, {
-        pollingInterval: 600000,
-        refetchOnFocus: true,
-        refetchOnMountOrArgChange: true,
-    });
+  const [searchQuery, setSearchQuery] = useState("");
 
-    // const {
-    //     data: conversations,
-    //     isLoading: isConversationsLoading,
-    //     isSuccess: isConversationsSuccess,
-    //     isError: isConversationsError,
-    //     error: conversationsError,
-    // } = useGetConversationsQuery(undefined, {pollingInterval: 60000, refetchOnFocus: true, refetchOnMountOrArgChange: true,})
-    // const [onlineUsers, setOnlineUsers] = useState([])
+  const {
+    data: users,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetUsersQuery(undefined, {
+    pollingInterval: 600000,
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
 
-    // useEffect(() => {
-    //     if (socket) {
-    //         const handleOnlineUsers = (data) => {
-    //             setOnlineUsers(data);
-    //         };
-    
-    //         socket.on("onlineUsers", handleOnlineUsers);
-    //         console.log("ONLINE USERS",onlineUsers)
-    //         // Cleanup listener on component unmount
-    //         return () => {
-    //             socket.off("onlineUsers", handleOnlineUsers);
-    //         };
-    //     }
-    // }, [socket]);
+  const filteredUsers = users
+    ? users.ids
+        .map((id) => users.entities[id])
+        .filter(
+          (user) =>
+            user.id !== userId &&
+            user.username.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    : [];
 
-    const {userId} = useAuth()
+  let content;
 
-    let content;
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const filteredUsers = users ? users.ids.map((id) => users.entities[id]).filter((user)=> user.id !== userId && user.username.toLowerCase().includes(searchQuery.toLowerCase())): []
-
-    // const changeConversation = (value) => {
-    //     changeChatRecipient(value)
-    // }
-    console.log("filtered users: ",filteredUsers)
-    
-    if (isLoading) {
-        content = <p>Loading...</p>;
-    } else if (isError) {
-        content = <p className="errmsg">{error?.data?.message}</p>;
-    } else if (isSuccess) {
-        content = filteredUsers.length ?(
-                searchQuery &&
-                <ul className='friends'>
-                    {filteredUsers.map((user) => (
-                        <li className="friend" key={user.id} onClick={() => {dispatch(setSelectedFriend(user.id)); setSearchQuery("")}}>{user.profilePic? <img className="profilePic" src={user.profilePic} alt="User Profile"/>: <img className="profilePic" src="https://api.dicebear.com/9.x/thumbs/svg?seed=Emery" alt="User Profile"/> } {user.fullname? user.fullname :user.username} {onlineUsers.includes(user.id)? "🟢":""}</li>
-                    ))}
-                </ul>
-        ): (
-            <p>No users found matching your search.</p>
-        );
-    }
-
-    return (
-        <div className='contact_panel'>
-            <input className='usersSearch' type="text" placeholder="Search Friends..." value={searchQuery} onChange={(e) =>setSearchQuery(e.target.value)}></input>
-            {content}
-            {/* <Conversations changeConversation = {changeConversation} users={users} onlineUsers={onlineUsers}/> */}
-            <Conversations/>
-        </div>
+  if (isLoading) {
+    content = <p className="text-gray-500 mt-4">Loading...</p>;
+  } else if (isError) {
+    content = (
+      <p className="text-red-500 mt-4">
+        {error?.data?.message || "Error loading users."}
+      </p>
     );
+  } else if (isSuccess && searchQuery) {
+    content = filteredUsers.length ? (
+      <ul className="space-y-2 mt-4">
+        {filteredUsers.map((user) => (
+          <li
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+            key={user.id}
+            onClick={() => {
+              dispatch(setSelectedFriend(user.id));
+              setSearchQuery("");
+            }}
+          >
+            <img
+              className="w-10 h-10 rounded-full"
+              src={
+                user.profilePic ||
+                "https://api.dicebear.com/9.x/thumbs/svg?seed=Emery"
+              }
+              alt="User Profile"
+            />
+            <span className="text-gray-800 font-medium truncate">
+              {user.fullname || user.username}
+            </span>
+            {onlineUsers.includes(user.id) && (
+              <span className="text-green-500 text-sm">●</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="text-sm text-gray-500 mt-4">
+        No users found matching your search.
+      </p>
+    );
+  }
+
+  return (
+    <div className="w-full h-full bg-white border-r border-gray-200 p-4 overflow-y-auto flex flex-col">
+      {/* Header with title and New Chat button */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-gray-800">Chats</h2>
+        <button
+          className="text-sm px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+          onClick={() => alert("New conversation modal goes here")}
+        >
+          New Chat
+        </button>
+      </div>
+
+      {/* Search */}
+      <SearchInput
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
+      {/* User search results OR fallback to conversation list */}
+      {searchQuery ? content : <Conversations />}
+    </div>
+  );
 };
 
 export default ContactPanel;
