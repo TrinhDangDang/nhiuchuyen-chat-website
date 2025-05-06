@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Conversations from "./Conversations";
 import useAuth from "../../hooks/useAuth";
-import { useGetUsersQuery } from "../users/usersApiSlice";
+import { useGetUsersQuery } from "../../app/api/usersApiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectOnlineUsers,
@@ -11,13 +11,13 @@ import {
 import SearchInput from "./SearchInput";
 import { useSocket } from "./SocketContext";
 import { FaUserFriends } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const ContactPanel = () => {
   const dispatch = useDispatch();
   const onlineUsers = useSelector(selectOnlineUsers);
   const { userId } = useAuth();
   const socket = useSocket();
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -34,16 +34,9 @@ const ContactPanel = () => {
 
   useEffect(() => {
     if (!socket) return;
-
-    const handleOnlineUsers = (data) => {
-      dispatch(setOnlineUsers(data));
-    };
-
+    const handleOnlineUsers = (data) => dispatch(setOnlineUsers(data));
     socket.on("onlineUsers", handleOnlineUsers);
-
-    return () => {
-      socket.off("onlineUsers", handleOnlineUsers);
-    };
+    return () => socket.off("onlineUsers", handleOnlineUsers);
   }, [socket, dispatch]);
 
   const filteredUsers = users
@@ -62,7 +55,9 @@ const ContactPanel = () => {
   let content;
 
   if (isLoading) {
-    content = <p className="text-gray-500 mt-4">Loading users...</p>;
+    content = (
+      <p className="text-gray-500 mt-4 animate-pulse">Loading users...</p>
+    );
   } else if (isError) {
     content = (
       <p className="text-red-500 mt-4">
@@ -71,15 +66,18 @@ const ContactPanel = () => {
     );
   } else if (searchQuery && isSuccess) {
     content = filteredUsers.length ? (
-      <ul className="space-y-3 mt-4">
+      <ul className="space-y-4 mt-4">
         {filteredUsers.map((user) => (
-          <li
+          <motion.li
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
             key={user.id}
             onClick={() => {
               dispatch(setSelectedFriend(user.id));
               setSearchQuery("");
             }}
-            className="flex items-center gap-4 p-3 bg-white/70 hover:bg-white/90 rounded-lg shadow cursor-pointer transition-all"
+            className="flex items-center gap-4 p-3 bg-white hover:bg-indigo-100 rounded-lg shadow cursor-pointer transition"
           >
             <div className="relative">
               <img
@@ -87,19 +85,19 @@ const ContactPanel = () => {
                   user.profilePic ||
                   "https://api.dicebear.com/9.x/thumbs/svg?seed=Emery"
                 }
-                alt="User Profile"
-                className="w-10 h-10 rounded-full object-cover"
+                alt="User"
+                className="w-12 h-12 rounded-full object-cover border border-indigo-200"
               />
               {onlineUsers.includes(user.id) && (
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-ping"></span>
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
               )}
             </div>
             <div className="flex-1 truncate">
-              <p className="font-medium text-gray-800 truncate">
+              <p className="text-md font-medium text-gray-800 truncate">
                 {user.fullname || user.username}
               </p>
             </div>
-          </li>
+          </motion.li>
         ))}
       </ul>
     ) : (
@@ -108,24 +106,32 @@ const ContactPanel = () => {
   }
 
   return (
-    <div className="w-full h-full bg-white/60 backdrop-blur-sm border-r border-gray-200 p-4 overflow-y-auto flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-          <FaUserFriends className="text-indigo-500" />
-          Conversations
+    <aside className="h-full w-full bg-gradient-to-b from-white to-indigo-50 border-r border-gray-200 overflow-y-auto p-6 flex flex-col shadow-xl">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-6 flex items-center justify-between"
+      >
+        <h2 className="text-2xl font-extrabold text-indigo-700 flex items-center gap-2">
+          <FaUserFriends className="text-indigo-500" /> People
         </h2>
-      </div>
+      </motion.div>
 
-      {/* Search */}
       <SearchInput
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      {/* Content */}
-      {searchQuery ? content : <Conversations />}
-    </div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex-1 mt-4"
+      >
+        {searchQuery ? content : <Conversations />}
+      </motion.div>
+    </aside>
   );
 };
 

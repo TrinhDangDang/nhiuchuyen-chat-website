@@ -1,16 +1,17 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../features/auth/authSlice";
 import { useLoginMutation } from "../features/auth/authApiSlice";
 import usePersist from "../hooks/usePersist";
-import useTitle from "../hooks/useTitle";
 import PulseLoader from "react-spinners/PulseLoader";
 import { motion } from "framer-motion";
+import Lottie from "lottie-react";
+import chatAnimation from "../img/chat.json";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
 
 const Login = () => {
-  useTitle("Login");
-
   const userRef = useRef();
   const errRef = useRef();
 
@@ -55,6 +56,10 @@ const Login = () => {
 
   const errClass = errMsg ? "text-red-500 text-sm mb-4 text-center" : "sr-only";
 
+  const particlesInit = useCallback(async (engine) => {
+    await loadFull(engine);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -64,14 +69,31 @@ const Login = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col md:flex-row bg-[#f9fafe]">
-      {/* Left: Branding */}
-      <div className="relative w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-purple-500 to-indigo-500 text-white p-10">
+    <main className="relative min-h-screen flex flex-col md:flex-row bg-[#f9fafe] overflow-hidden">
+      <Particles
+        className="absolute inset-0 z-0"
+        init={particlesInit}
+        options={{
+          fullScreen: false,
+          background: { color: "#f9fafe" },
+          particles: {
+            number: { value: 60 },
+            size: { value: 2 },
+            move: { speed: 0.5 },
+            color: { value: "#8b5cf6" },
+            links: { enable: true, color: "#c084fc", distance: 150 },
+          },
+        }}
+      />
+
+      {/* Left: Branding + Lottie */}
+      <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-purple-500 to-indigo-500 text-white p-10">
+        <Lottie animationData={chatAnimation} loop className="w-72 h-72 mb-6" />
         <motion.h1
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-5xl font-extrabold text-center mb-4"
+          className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-600 mb-4"
         >
           Nhiều Chuyện
         </motion.h1>
@@ -81,16 +103,18 @@ const Login = () => {
           transition={{ delay: 0.5 }}
           className="text-lg text-center max-w-md"
         >
-          Nơi tám chuyện, chia sẻ, và kết nối với mọi người!
+          Chill chat, vui cực!
         </motion.p>
-
-        <div className="absolute top-10 right-10 w-32 h-32 bg-pink-400 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute bottom-10 left-10 w-48 h-48 bg-blue-300 rounded-full blur-3xl opacity-20"></div>
       </div>
 
       {/* Right: Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-10">
-        <div className="w-full max-w-md bg-white/50 backdrop-blur-md rounded-xl shadow-lg p-8">
+      <div className="z-10 w-full md:w-1/2 flex items-center justify-center p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="w-full max-w-md bg-white/50 backdrop-blur-md rounded-xl shadow-xl p-8 transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
+        >
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
             Welcome Back 👋
           </h2>
@@ -167,7 +191,7 @@ const Login = () => {
               </p>
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

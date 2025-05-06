@@ -9,13 +9,10 @@ import PersistLogin from "./features/auth/PersistLogin";
 import RequireAuth from "./features/auth/RequireAuth";
 import Chat from "./features/chat/Chat";
 import { ROLES } from "./config/roles";
-import useTitle from "./hooks/useTitle";
 import { SocketProvider } from "./features/chat/SocketContext";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  useTitle("Trinh Dang");
-
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />

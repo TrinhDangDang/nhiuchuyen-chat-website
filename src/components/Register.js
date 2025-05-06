@@ -1,7 +1,12 @@
-import { useState, useEffect } from "react";
+// Register.js
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRegisterNewUserMutation } from "../features/users/usersApiSlice";
+import { useRegisterNewUserMutation } from "../app/api/usersApiSlice";
 import { motion } from "framer-motion";
+import Lottie from "lottie-react";
+import chatAnimation from "../img/chat.json";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
 
 const USER_REGEX = /^[A-z0-9]{3,20}$/;
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
@@ -21,7 +26,7 @@ const Register = () => {
   const [validUsername, setValidUsername] = useState(false);
   const [password, setPassword] = useState("");
   const [validPassword, setValidPassword] = useState(false);
-  const [roles, setRoles] = useState(["User"]);
+  const [roles] = useState(["User"]);
 
   useEffect(() => setValidUsername(USER_REGEX.test(username)), [username]);
   useEffect(() => setValidPassword(PWD_REGEX.test(password)), [password]);
@@ -32,7 +37,6 @@ const Register = () => {
     if (isSuccess) {
       setUsername("");
       setPassword("");
-      setRoles([]);
       navigate("/login");
     }
   }, [isSuccess, navigate]);
@@ -46,33 +50,50 @@ const Register = () => {
       validLastName,
     ].every(Boolean) && !isLoading;
 
-  const onSaveUserClicked = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (canSave) {
+      const fullname = `${firstName} ${lastName}`.trim();
       try {
-        const fullname = `${firstName} ${lastName}`.trim();
         await registerNewUser({ fullname, username, password, roles });
       } catch (err) {
-        console.error("Error creating user:", err);
+        console.error("Registration failed:", err);
       }
     }
   };
 
-  const errClass = isError
-    ? "text-red-500 text-sm mb-4 text-center"
-    : "sr-only";
+  const particlesInit = useCallback(async (engine) => {
+    await loadFull(engine);
+  }, []);
 
   return (
-    <main className="min-h-screen flex flex-col md:flex-row bg-[#f9fafe]">
-      {/* Left: Branding */}
-      <div className="relative w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-pink-500 to-purple-600 text-white p-10">
+    <main className="relative min-h-screen flex flex-col md:flex-row overflow-hidden">
+      <Particles
+        className="absolute inset-0 z-0"
+        init={particlesInit}
+        options={{
+          fullScreen: false,
+          background: { color: "#f9fafe" },
+          particles: {
+            number: { value: 60 },
+            size: { value: 2 },
+            move: { speed: 0.5 },
+            color: { value: "#8b5cf6" },
+            links: { enable: true, color: "#c084fc", distance: 150 },
+          },
+        }}
+      />
+
+      {/* Left Panel */}
+      <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-pink-500 to-purple-600 text-white p-10">
+        <Lottie animationData={chatAnimation} loop className="w-72 h-72 mb-6" />
         <motion.h1
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-5xl font-extrabold text-center mb-4"
+          className="text-5xl font-extrabold bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-600 text-transparent bg-clip-text mb-4"
         >
-          ✨ Nhiều Chuyện
+          Nhiều Chuyện
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -80,117 +101,69 @@ const Register = () => {
           transition={{ delay: 0.5 }}
           className="text-lg text-center max-w-md"
         >
-          Đăng ký để bắt đầu cuộc trò chuyện thú vị với cộng đồng!
+          Tạo tài khoản để không bỏ lỡ những cuộc trò chuyện thú vị!
         </motion.p>
-
-        <div className="absolute top-10 right-10 w-32 h-32 bg-indigo-300 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute bottom-10 left-10 w-48 h-48 bg-yellow-300 rounded-full blur-3xl opacity-20"></div>
       </div>
 
-      {/* Right: Registration Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-10">
-        <div className="w-full max-w-xl bg-white/50 backdrop-blur-md rounded-xl shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
-            Create Your Account
+      {/* Right Panel */}
+      <div className="z-10 w-full md:w-1/2 flex items-center justify-center p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="w-full max-w-xl bg-white/60 backdrop-blur-md rounded-xl shadow-xl p-8"
+        >
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            Register
           </h2>
-          <p className={errClass}>{error?.data?.message}</p>
-
-          <form onSubmit={onSaveUserClicked} className="space-y-5">
+          <p
+            className={
+              isError ? "text-red-500 text-sm text-center mb-4" : "sr-only"
+            }
+          >
+            {error?.data?.message}
+          </p>
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="firstname"
-                  className="block mb-1 text-gray-700 font-medium"
-                >
-                  First Name
-                </label>
-                <input
-                  id="firstname"
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  autoComplete="off"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${
-                    validFirstName ? "border-green-400" : "border-red-400"
-                  }`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="lastname"
-                  className="block mb-1 text-gray-700 font-medium"
-                >
-                  Last Name
-                </label>
-                <input
-                  id="lastname"
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  autoComplete="off"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${
-                    validLastName ? "border-green-400" : "border-red-400"
-                  }`}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="username"
-                className="block mb-1 text-gray-700 font-medium"
-              >
-                Username{" "}
-                <span className="text-sm text-gray-400">[3-20 letters]</span>
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="off"
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${
-                  validUsername ? "border-green-400" : "border-red-400"
-                }`}
-                required
+              <InputField
+                label="First Name"
+                id="firstname"
+                value={firstName}
+                onChange={setFirstName}
+                isValid={validFirstName}
+              />
+              <InputField
+                label="Last Name"
+                id="lastname"
+                value={lastName}
+                onChange={setLastName}
+                isValid={validLastName}
               />
             </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block mb-1 text-gray-700 font-medium"
-              >
-                Password{" "}
-                <span className="text-sm text-gray-400">
-                  [4-12 chars incl. !@#$%]
-                </span>
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${
-                  validPassword ? "border-green-400" : "border-red-400"
-                }`}
-                required
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                disabled={!canSave}
-                className="w-full py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-all disabled:opacity-50"
-              >
-                Register
-              </button>
-            </div>
-
+            <InputField
+              label="Username"
+              id="username"
+              value={username}
+              onChange={setUsername}
+              isValid={validUsername}
+              hint="[3-20 letters]"
+            />
+            <InputField
+              label="Password"
+              id="password"
+              value={password}
+              onChange={setPassword}
+              isValid={validPassword}
+              type="password"
+              hint="[4-12 characters incl. !@#$%]"
+            />
+            <button
+              type="submit"
+              disabled={!canSave}
+              className="w-full py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-all disabled:opacity-50"
+            >
+              Register
+            </button>
             <p className="text-center text-sm text-gray-600">
               Already have an account?{" "}
               <button
@@ -202,10 +175,37 @@ const Register = () => {
               </button>
             </p>
           </form>
-        </div>
+        </motion.div>
       </div>
     </main>
   );
 };
+
+const InputField = ({
+  label,
+  id,
+  value,
+  onChange,
+  isValid,
+  type = "text",
+  hint,
+}) => (
+  <div>
+    <label htmlFor={id} className="block mb-1 text-gray-700 font-medium">
+      {label} {hint && <span className="text-sm text-gray-400">{hint}</span>}
+    </label>
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      autoComplete="off"
+      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-purple-300 transition ${
+        isValid ? "shadow-inner" : ""
+      }`}
+      required
+    />
+  </div>
+);
 
 export default Register;
