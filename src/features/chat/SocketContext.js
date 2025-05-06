@@ -25,7 +25,7 @@ export const SocketProvider = ({ children }) => {
           const response = await refresh().unwrap();
           accessToken = response.accessToken;
         }
-        newSocket = io("http://localhost:3500", {
+        newSocket = io("https://nhieuchuyen-chat-backend.onrender.com", {
           //http://localhost:3500 https://api.trinhdangdang.com
           auth: { token: accessToken },
         });
