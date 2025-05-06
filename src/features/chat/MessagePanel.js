@@ -8,7 +8,12 @@ import { useSocket } from "./SocketContext";
 import { motion } from "framer-motion";
 import { FiSend } from "react-icons/fi";
 
-const MessagePanel = ({ showFriendProfile, setShowFriendProfile }) => {
+const MessagePanel = ({
+  showFriendProfile,
+  setShowFriendProfile,
+  setShowContactPanel,
+  setShowProfilePanel,
+}) => {
   const selectedFriend = useSelector(selectSelectedFriend);
   const users = useSelector(selectUsersData);
   const { userId } = useAuth();
@@ -154,12 +159,26 @@ const MessagePanel = ({ showFriendProfile, setShowFriendProfile }) => {
           <h2 className="font-semibold text-lg text-gray-800">{fullname}</h2>
           <p className="text-xs text-green-500">● Online</p>
         </div>
-        <button
-          onClick={() => setShowFriendProfile((prev) => !prev)}
-          className="text-sm text-indigo-600 hover:underline"
-        >
-          {showFriendProfile ? "Hide Info" : "View Info"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowContactPanel(true)}
+            className="text-sm text-indigo-600 hover:underline md:hidden"
+          >
+            Contacts
+          </button>
+          <button
+            onClick={() => setShowProfilePanel(true)}
+            className="text-sm text-indigo-600 hover:underline md:hidden"
+          >
+            Profile
+          </button>
+          <button
+            onClick={() => setShowFriendProfile((prev) => !prev)}
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            {showFriendProfile ? "Hide Info" : "View Info"}
+          </button>
+        </div>
       </motion.div>
 
       {/* Messages List */}

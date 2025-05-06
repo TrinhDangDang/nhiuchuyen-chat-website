@@ -48,7 +48,7 @@ const Login = () => {
       } else if (err.status === 401) {
         setErrMsg("Unauthorized");
       } else {
-        setErrMsg(err.data?.message);
+        setErrMsg(err.data?.message || "Login failed");
       }
       errRef.current?.focus();
     }
@@ -86,14 +86,18 @@ const Login = () => {
         }}
       />
 
-      {/* Left: Branding + Lottie */}
-      <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-purple-500 to-indigo-500 text-white p-10">
-        <Lottie animationData={chatAnimation} loop className="w-72 h-72 mb-6" />
+      {/* Left Side: Branding & Animation */}
+      <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-purple-500 to-indigo-500 text-white px-6 py-10 sm:px-10">
+        <Lottie
+          animationData={chatAnimation}
+          loop
+          className="w-48 h-48 sm:w-64 sm:h-64 mb-6"
+        />
         <motion.h1
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-600 mb-4"
+          className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-600 mb-2 text-center"
         >
           Nhiều Chuyện
         </motion.h1>
@@ -101,26 +105,28 @@ const Login = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-lg text-center max-w-md"
+          className="text-base sm:text-lg text-center max-w-xs sm:max-w-md"
         >
           Chill chat, vui cực!
         </motion.p>
       </div>
 
-      {/* Right: Form */}
-      <div className="z-10 w-full md:w-1/2 flex items-center justify-center p-10">
+      {/* Right Side: Login Form */}
+      <div className="z-10 w-full md:w-1/2 flex items-center justify-center px-6 sm:px-10 py-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="w-full max-w-md bg-white/50 backdrop-blur-md rounded-xl shadow-xl p-8 transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
+          className="w-full max-w-md bg-white/60 backdrop-blur-md rounded-xl shadow-xl p-6 sm:p-8 transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
         >
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
             Welcome Back 👋
           </h2>
+
           <p ref={errRef} className={errClass} aria-live="assertive">
             {errMsg}
           </p>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label
@@ -137,7 +143,7 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="off"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm sm:text-base focus:outline-none focus:ring focus:border-indigo-500"
               />
             </div>
 
@@ -154,7 +160,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm sm:text-base focus:outline-none focus:ring focus:border-indigo-500"
               />
             </div>
 
@@ -173,7 +179,7 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all"
+              className="w-full py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all text-sm sm:text-base"
             >
               Sign In
             </button>
