@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCredentials } from "../../features/auth/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3500", // https://api.trinhdangdang.com http://localhost:3500
+  baseUrl: "https://nhieuchuyen-chat-backend.onrender.com", // https://api.trinhdangdang.com http://localhost:3500
   credentials: "include", //ensures that cookies are included in requests
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.token; //get token from the auth state
