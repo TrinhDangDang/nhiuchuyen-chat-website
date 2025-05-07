@@ -53,3 +53,9 @@ Frontend: Vercel
 Backend: Render or Railway
 
 Database: MongoDB Atlas
+
+<p align="center">
+  <img src="image.png" alt="Home Page" width="30%" />
+  <img src="image-1.png" alt="Order Summary" width="30%" />
+  <img src="image-2.png" alt="Confirmation Page" width="30%" />
+</p>
